@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNav } from "../../../context/nav-context";
 
@@ -16,6 +16,22 @@ const Navbar: React.FC = () => {
   );
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const location = useLocation();
+
+  // Memoized NavLinkItem component to avoid unnecessary re-renders
+  const NavLinkItem: React.FC<NavLink> = memo(({ text, url }) => (
+    <li>
+      <Link
+        to={url}
+        className={`block px-4 py-2 hover:text-secondary ${activeNav === url ? "text-secondary font-bold" : ""}`}
+        onClick={() => {
+          setActiveNav(url);
+          if (isMobile) toggleMenu(); // Close menu on mobile after clicking a link
+        }}
+      >
+        {text}
+      </Link>
+    </li>
+  ));
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 860);
@@ -49,22 +65,7 @@ const Navbar: React.FC = () => {
         { text: "Browse Books", url: "/books" },
       ];
 
-  const NavLinkItem = ({ text, url }: NavLink) => (
-    <li>
-      <Link
-        to={url}
-        className={`block px-4 py-2 hover:text-secondary ${activeNav === url ? "text-secondary font-bold" : ""}`}
-        onClick={() => {
-          setActiveNav(url);
-          if (isMobile) toggleMenu(); // Close menu on mobile after clicking a link
-        }}
-      >
-        {text}
-      </Link>
-    </li>
-  );
-
-  const AuthButtons = () => {
+  const AuthButtons: React.FC = () => {
     const currentPath = location.pathname;
     const isLoginPage =
       currentPath.includes("login-signup") &&
@@ -89,7 +90,7 @@ const Navbar: React.FC = () => {
             {!isLoginPage && (
               <Link
                 to="/login-signup?isLogin=true"
-                className="px-4 py-2 bg-secondary text-textLight rounded hover:bg-primary *:focus:outline-none focus:ring-2 focus:ring-secondary"
+                className="px-4 py-2 bg-secondary text-textLight rounded hover:bg-primary focus:outline-none focus:ring-2 focus:ring-secondary"
               >
                 Login
               </Link>

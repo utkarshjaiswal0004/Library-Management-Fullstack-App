@@ -79,6 +79,4 @@ describe("Navbar Component", () => {
     // Clean up
     localStorage.removeItem("token");
   });
-
-
 });
