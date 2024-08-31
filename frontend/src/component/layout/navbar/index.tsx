@@ -128,7 +128,7 @@ const Navbar: React.FC = () => {
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
-            Menu
+            {isMobile && isMenuOpen ? "Close" : "Menu"}
           </button>
         </div>
 

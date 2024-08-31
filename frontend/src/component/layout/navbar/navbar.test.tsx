@@ -80,4 +80,29 @@ describe("Navbar Component", () => {
     localStorage.removeItem("token");
   });
 
+  it("should toggle menu on mobile view", () => {
+    // Mock window innerWidth
+    Object.defineProperty(window, "innerWidth", { value: 500, writable: true });
+
+    render(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText("Menu")).toBeInTheDocument();
+    // Trigger the menu toggle button
+    fireEvent.click(screen.getByText("Menu"));
+
+    // Assert that the menu is now visible
+    expect(screen.getByText("Close")).toBeVisible();
+
+    // Toggle the menu again to close
+    fireEvent.click(screen.getByText("Close"));
+
+    // Assert that the menu is hidden
+    expect(screen.getByText("Menu")).toBeVisible();
+  });
+
+ 
 });
