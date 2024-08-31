@@ -51,4 +51,16 @@ describe("Navbar Component", () => {
     // Clean up
     localStorage.removeItem("token");
   });
+
+  it("should render login and register buttons when not logged in", () => {
+    render(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    );
+
+    // Assert that login and register links are displayed
+    expect(screen.getByText("Login")).toBeInTheDocument();
+    expect(screen.getByText("Register")).toBeInTheDocument();
+  });
 });
