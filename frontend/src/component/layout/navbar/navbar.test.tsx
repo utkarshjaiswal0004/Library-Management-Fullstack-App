@@ -30,4 +30,25 @@ describe("Navbar Component", () => {
     // Assert that the activeNav has been set (mocked function)
     expect(container.querySelector("a")?.getAttribute("href")).toBe("/");
   });
+
+  it("should render navigation links when logged in", () => {
+    // Set up localStorage and render Navbar
+    localStorage.setItem("token", "test-token");
+
+    render(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    );
+
+    // Assert that navigation links are displayed
+    expect(screen.getByText("Library")).toBeInTheDocument();
+    expect(screen.getByText("Browse Books")).toBeInTheDocument();
+    expect(screen.getByText("My Borrowed Books")).toBeInTheDocument();
+    expect(screen.getByText("Return Books")).toBeInTheDocument();
+    expect(screen.getByText("Admin Dashboard")).toBeInTheDocument();
+
+    // Clean up
+    localStorage.removeItem("token");
+  });
 });
