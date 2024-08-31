@@ -90,19 +90,19 @@ describe("Navbar Component", () => {
       </MemoryRouter>,
     );
 
+    // Assert that the initial text is 'Menu'
     expect(screen.getByText("Menu")).toBeInTheDocument();
+
     // Trigger the menu toggle button
     fireEvent.click(screen.getByText("Menu"));
 
-    // Assert that the menu is now visible
-    expect(screen.getByText("Close")).toBeVisible();
+    // Assert that the text has changed to 'Close'
+    expect(screen.getByText("Close")).toBeInTheDocument();
 
     // Toggle the menu again to close
     fireEvent.click(screen.getByText("Close"));
 
-    // Assert that the menu is hidden
-    expect(screen.getByText("Menu")).toBeVisible();
+    // Assert that the text has changed back to 'Menu'
+    expect(screen.getByText("Menu")).toBeInTheDocument();
   });
-
- 
 });

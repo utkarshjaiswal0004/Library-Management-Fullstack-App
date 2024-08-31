@@ -1,6 +1,7 @@
 import React, { useState, useEffect, memo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNav } from "../../../context/nav-context";
+import AuthButtons from "./auth-buttons";
 
 // Define the type for navigation link
 type NavLink = {
@@ -8,7 +9,6 @@ type NavLink = {
   url: string;
 };
 
-// Memoized NavLinkItem component to avoid unnecessary re-renders
 const NavLinkItem: React.FC<
   NavLink & {
     setActiveNav: (url: string) => void;
@@ -72,50 +72,6 @@ const Navbar: React.FC = () => {
         { text: "Browse Books", url: "/books" },
       ];
 
-  const AuthButtons: React.FC = () => {
-    const currentPath = location.pathname;
-    const isLoginPage =
-      currentPath.includes("login-signup") &&
-      new URLSearchParams(location.search).get("isLogin") === "true";
-    const isRegisterPage =
-      currentPath.includes("login-signup") &&
-      new URLSearchParams(location.search).get("isLogin") === "false";
-
-    return (
-      <div
-        className={`flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 mt-4 lg:mt-0 ${isMobile && !isMenuOpen ? "hidden" : "block"}`}
-      >
-        {isLoggedIn ? (
-          <button
-            className="px-4 py-2 bg-accent text-textLight rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-accent"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        ) : (
-          <>
-            {!isLoginPage && (
-              <Link
-                to="/login-signup?isLogin=true"
-                className="px-4 py-2 bg-secondary text-textLight rounded hover:bg-primary focus:outline-none focus:ring-2 focus:ring-secondary"
-              >
-                Login
-              </Link>
-            )}
-            {!isRegisterPage && (
-              <Link
-                to="/login-signup?isLogin=false"
-                className="px-4 py-2 bg-backgroundLight text-textDark rounded hover:bg-primary hover:text-textLight focus:outline-none focus:ring-2 focus:ring-secondary"
-              >
-                Register
-              </Link>
-            )}
-          </>
-        )}
-      </div>
-    );
-  };
-
   return (
     <nav className="fixed w-full py-4 bg-backgroundDark text-textLight shadow-lg top-0 z-50">
       <div className="container mx-auto flex lg:flex-row flex-col items-center justify-between px-4 md:px-6">
@@ -150,7 +106,13 @@ const Navbar: React.FC = () => {
             ))}
           </ul>
 
-          <AuthButtons />
+          <AuthButtons
+            isLoggedIn={isLoggedIn}
+            isMobile={isMobile}
+            isMenuOpen={isMenuOpen}
+            handleLogout={handleLogout}
+            toggleMenu={toggleMenu}
+          />
         </div>
       </div>
     </nav>
