@@ -126,4 +126,26 @@ describe("Navbar Component", () => {
     expect(screen.queryByText("Menu")).toBeInTheDocument();
   });
 
+  it("should handle logout correctly", () => {
+    localStorage.setItem("token", "test-token");
+
+    vi.mock("../../../context/nav-context", () => ({
+      useNav: () => ({
+        activeNav: "/",
+        setActiveNav: vi.fn(),
+      }),
+    }));
+
+    render(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    );
+
+    // Simulate clicking the logout button
+    fireEvent.click(screen.getByText("Logout"));
+
+    // Assert that localStorage token is removed and state is updated
+    expect(localStorage.getItem("token")).toBeNull();
+  });
 });
