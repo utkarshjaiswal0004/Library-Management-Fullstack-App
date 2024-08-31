@@ -8,6 +8,29 @@ type NavLink = {
   url: string;
 };
 
+// Memoized NavLinkItem component to avoid unnecessary re-renders
+const NavLinkItem: React.FC<
+  NavLink & {
+    setActiveNav: (url: string) => void;
+    isMobile: boolean;
+    toggleMenu: () => void;
+    activeNav: string;
+  }
+> = memo(({ text, url, setActiveNav, isMobile, toggleMenu, activeNav }) => (
+  <li>
+    <Link
+      to={url}
+      className={`block px-4 py-2 hover:text-secondary ${activeNav === url ? "text-secondary font-bold" : ""}`}
+      onClick={() => {
+        setActiveNav(url);
+        if (isMobile) toggleMenu(); // Close menu on mobile after clicking a link
+      }}
+    >
+      {text}
+    </Link>
+  </li>
+));
+
 const Navbar: React.FC = () => {
   const { activeNav, setActiveNav } = useNav();
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 860);
@@ -16,22 +39,6 @@ const Navbar: React.FC = () => {
   );
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const location = useLocation();
-
-  // Memoized NavLinkItem component to avoid unnecessary re-renders
-  const NavLinkItem: React.FC<NavLink> = memo(({ text, url }) => (
-    <li>
-      <Link
-        to={url}
-        className={`block px-4 py-2 hover:text-secondary ${activeNav === url ? "text-secondary font-bold" : ""}`}
-        onClick={() => {
-          setActiveNav(url);
-          if (isMobile) toggleMenu(); // Close menu on mobile after clicking a link
-        }}
-      >
-        {text}
-      </Link>
-    </li>
-  ));
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 860);
@@ -132,7 +139,14 @@ const Navbar: React.FC = () => {
             className={`flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 ${isMobile && !isMenuOpen ? "hidden" : "block"}`}
           >
             {navLinks.map((link) => (
-              <NavLinkItem key={link.url} {...link} />
+              <NavLinkItem
+                key={link.url}
+                {...link}
+                setActiveNav={setActiveNav}
+                isMobile={isMobile}
+                toggleMenu={toggleMenu}
+                activeNav={activeNav}
+              />
             ))}
           </ul>
 
