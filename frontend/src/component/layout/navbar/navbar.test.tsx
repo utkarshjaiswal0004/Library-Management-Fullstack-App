@@ -63,4 +63,22 @@ describe("Navbar Component", () => {
     expect(screen.getByText("Login")).toBeInTheDocument();
     expect(screen.getByText("Register")).toBeInTheDocument();
   });
+
+  it("should show logout button when logged in", () => {
+    localStorage.setItem("token", "test-token");
+
+    render(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    );
+
+    // Assert that the logout button is displayed
+    expect(screen.getByText("Logout")).toBeInTheDocument();
+
+    // Clean up
+    localStorage.removeItem("token");
+  });
+
+
 });
