@@ -8,7 +8,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
     <NavProvider>
       <Navbar />
-      <main>{children}</main>
+      <main className="my-10 container mx-auto">{children}</main>
       <Footer />
     </NavProvider>
   );

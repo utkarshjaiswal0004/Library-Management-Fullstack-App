@@ -1,29 +1,120 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, memo } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useNav } from "../../../context/nav-context";
+import AuthButtons from "./auth-buttons";
+
+// Define the type for navigation link
+type NavLink = {
+  text: string;
+  url: string;
+};
+
+const NavLinkItem: React.FC<
+  NavLink & {
+    setActiveNav: (url: string) => void;
+    isMobile: boolean;
+    toggleMenu: () => void;
+    activeNav: string;
+  }
+> = memo(({ text, url, setActiveNav, isMobile, toggleMenu, activeNav }) => (
+  <li>
+    <Link
+      to={url}
+      className={`block px-4 py-2 hover:text-secondary ${activeNav === url ? "text-secondary font-bold" : ""}`}
+      onClick={() => {
+        setActiveNav(url);
+        if (isMobile) toggleMenu(); // Close menu on mobile after clicking a link
+      }}
+    >
+      {text}
+    </Link>
+  </li>
+));
+
 const Navbar: React.FC = () => {
-  const { activeNav } = useNav();
+  const { activeNav, setActiveNav } = useNav();
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 860);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    !!localStorage.getItem("token"),
+  );
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 860);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("token"));
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+  };
+
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
+  const navLinks: NavLink[] = isLoggedIn
+    ? [
+        { text: "Library", url: "/" },
+        { text: "Browse Books", url: "/books" },
+        { text: "My Borrowed Books", url: "/my-borrowed-books" },
+        { text: "Return Books", url: "/return-books" },
+        { text: "Admin Dashboard", url: "/admin/dashboard" },
+      ]
+    : [
+        { text: "Library", url: "/" },
+        { text: "Browse Books", url: "/books" },
+      ];
 
   return (
-    <nav className="fixed w-screen py-4 bg-backgroundDark m-auto items-center top-0 text-textLight justify-center">
-      <ul className="flex mx-auto h-[fill-available] items-center justify-center space-x-4">
-        <li>
-          <Link
-            to="/"
-            className={`hover:text-blue-500 ${activeNav === "/" ? "text-blue-500 font-bold" : ""}`}
-          >
-            Home
+    <nav className="fixed w-full py-4 bg-backgroundDark text-textLight shadow-lg top-0 z-50">
+      <div className="container mx-auto flex lg:flex-row flex-col items-center justify-between px-4 md:px-6">
+        <div className="flex flex-row w-full lg:w-auto justify-between items-center">
+          <Link to="/" className="text-lg font-semibold hover:text-secondary">
+            HEXAD
           </Link>
-        </li>
-        <li>
-          <Link
-            to="/login"
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+          <button
+            className="lg:hidden px-4 py-2 rounded bg-gray-600 focus:outline-none focus:ring-2 focus:ring-secondary"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
           >
-            Login
-          </Link>
-        </li>
-      </ul>
+            {isMobile && isMenuOpen ? "Close" : "Menu"}
+          </button>
+        </div>
+
+        <div
+          className={`lg:flex lg:space-x-6 lg:items-center ${isMobile && !isMenuOpen ? "hidden" : "block"}`}
+        >
+          <ul
+            className={`flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 ${isMobile && !isMenuOpen ? "hidden" : "block"}`}
+          >
+            {navLinks.map((link) => (
+              <NavLinkItem
+                key={link.url}
+                {...link}
+                setActiveNav={setActiveNav}
+                isMobile={isMobile}
+                toggleMenu={toggleMenu}
+                activeNav={activeNav}
+              />
+            ))}
+          </ul>
+
+          <AuthButtons
+            isLoggedIn={isLoggedIn}
+            isMobile={isMobile}
+            isMenuOpen={isMenuOpen}
+            handleLogout={handleLogout}
+            toggleMenu={toggleMenu}
+          />
+        </div>
+      </div>
     </nav>
   );
 };
