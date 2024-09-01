@@ -1,4 +1,3 @@
-// src/components/Navbar.tsx
 import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNav } from "../../../context/nav-context";
