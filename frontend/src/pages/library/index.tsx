@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Book } from "../../interfaces/book";
 import "../../styles/shimmer.css";
 import { fetchBooks } from "../../services/book/book-service";
+import ShimmerCard from "../../component/shimmer-card";
+import BookCard from "../../component/book-card";
 
 const Library: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
@@ -28,16 +30,7 @@ const Library: React.FC = () => {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[...Array(8)].map((_, index) => (
-            <div
-              key={index}
-              className="bg-white shadow-lg rounded-lg overflow-hidden"
-            >
-              <div className="w-full h-48 shimmer"></div>
-              <div className="p-4">
-                <div className="bg-gray-200 h-6 mb-2 shimmer"></div>
-                <div className="bg-gray-200 h-4 shimmer"></div>
-              </div>
-            </div>
+            <ShimmerCard key={index} />
           ))}
         </div>
       ) : books.length === 0 ? (
@@ -45,33 +38,7 @@ const Library: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {books.map((book) => (
-            <div
-              key={book.id}
-              className="bg-white shadow-lg rounded-lg overflow-hidden cursor-pointer"
-              onClick={() => handleBookClick(book)}
-            >
-              <div className="relative">
-                <img
-                  src={book.imageUrl || "/placeholder-image.jpg"}
-                  alt={book.title}
-                  className="w-full h-48 object-cover"
-                  loading="lazy"
-                />
-                {!book.imageUrl && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-gray-400">No Image Available</span>
-                  </div>
-                )}
-              </div>
-              <div className="p-4">
-                <h2 className="text-xl font-semibold text-primary">
-                  {book.title}
-                </h2>
-                <p className="text-md text-textDark mt-1">
-                  Author: {book.author}
-                </p>
-              </div>
-            </div>
+            <BookCard onClick={handleBookClick} book={book} />
           ))}
         </div>
       )}
