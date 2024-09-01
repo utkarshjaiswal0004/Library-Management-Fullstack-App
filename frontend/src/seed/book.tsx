@@ -14,7 +14,7 @@ export const seedBooks: Book[] = [
     id: "2",
     title: "1984",
     author: "George Orwell",
-    copies: 3,
+    copies: 0,
     description:
       "A dystopian social science fiction novel and cautionary tale, warning of the dangers of totalitarianism.",
     imageUrl: "https://edit.org/images/cat/book-covers-big-2019101610.jpg",
