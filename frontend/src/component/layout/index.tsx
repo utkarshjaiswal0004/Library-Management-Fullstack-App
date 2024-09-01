@@ -1,4 +1,3 @@
-// src/components/layout/Layout.tsx
 import React from "react";
 import { NavProvider } from "../../context/nav-context";
 import Footer from "./footer";
