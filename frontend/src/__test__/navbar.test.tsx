@@ -4,7 +4,7 @@ import { describe, it, expect, vi } from "vitest";
 import Navbar from "../component/layout/navbar";
 
 // useNav hook mock
-vi.mock("../../../context/nav-context", () => ({
+vi.mock("../context/nav-context", () => ({
   useNav: () => ({
     activeNav: "/",
     setActiveNav: vi.fn(),
