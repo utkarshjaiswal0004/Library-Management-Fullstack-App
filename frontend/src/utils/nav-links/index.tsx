@@ -1,5 +1,5 @@
-import { NavLink } from "../../component/interfaces/nav-links";
-import { UserInfo } from "../../component/interfaces/user";
+import { NavLink } from "../../interfaces/nav-links";
+import { UserInfo } from "../../interfaces/user";
 
 export const getNavLinks = (
   isLoggedIn: boolean,
