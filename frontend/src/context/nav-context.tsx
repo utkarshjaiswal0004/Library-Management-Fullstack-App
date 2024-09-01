@@ -1,4 +1,3 @@
-// src/context/NavContext.tsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 

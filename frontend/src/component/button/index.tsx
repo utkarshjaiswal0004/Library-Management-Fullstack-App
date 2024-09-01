@@ -1,4 +1,3 @@
-// src/components/Button.tsx
 import React from "react";
 
 interface ButtonProps {
@@ -6,6 +5,7 @@ interface ButtonProps {
   children: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -13,16 +13,18 @@ const Button: React.FC<ButtonProps> = ({
   children,
   className = "",
   disabled = false,
+  type = "button",
 }) => {
   return (
     <button
       onClick={onClick}
-      className={`px-8 py-3 font-semibold text-textLight transition duration-200 ease-in-out rounded-md shadow ${
+      className={`px-4 py-2 font-semibold text-textLight transition duration-200 ease-in-out rounded-md shadow ${
         disabled
           ? "bg-gray-400 cursor-not-allowed"
           : "bg-primary hover:bg-secondary"
       } ${className}`}
       disabled={disabled}
+      type={type}
     >
       {children}
     </button>
