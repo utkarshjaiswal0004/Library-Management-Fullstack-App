@@ -105,4 +105,47 @@ describe("Navbar Component", () => {
     // Assert that the text has changed back to 'Menu'
     expect(screen.getByText("Menu")).toBeInTheDocument();
   });
+
+  it("should close the menu on mobile view after clicking a link", () => {
+    // Mock window innerWidth
+    Object.defineProperty(window, "innerWidth", { value: 500, writable: true });
+
+    render(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    );
+
+    // Open the menu
+    fireEvent.click(screen.getByText("Menu"));
+
+    // Click on a navigation link
+    fireEvent.click(screen.getByText("Library"));
+
+    // Assert that the menu is closed after clicking a link
+    expect(screen.queryByText("Menu")).toBeInTheDocument();
+  });
+
+  it("should handle logout correctly", () => {
+    localStorage.setItem("token", "test-token");
+
+    vi.mock("../../../context/nav-context", () => ({
+      useNav: () => ({
+        activeNav: "/",
+        setActiveNav: vi.fn(),
+      }),
+    }));
+
+    render(
+      <MemoryRouter>
+        <Navbar />
+      </MemoryRouter>,
+    );
+
+    // Simulate clicking the logout button
+    fireEvent.click(screen.getByText("Logout"));
+
+    // Assert that localStorage token is removed and state is updated
+    expect(localStorage.getItem("token")).toBeNull();
+  });
 });
