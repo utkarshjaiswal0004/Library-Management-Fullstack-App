@@ -21,7 +21,6 @@ const Library: React.FC = () => {
   }, []);
 
   const handleBookClick = (book: Book) => {
-    // Navigate to the book details page with the book ID
     navigate(`/book/${book.id}`);
   };
 
