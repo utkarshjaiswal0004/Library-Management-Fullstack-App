@@ -1,24 +1,32 @@
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "../component/layout";
-import LandingPage from "../pages/library";
 import NotFound from "../component/not-found";
+import LibraryPage from "../pages/library";
 import BookDetails from "../pages/book-details";
+import RegistrationPage from "../pages/registration";
 
 const routes = createBrowserRouter([
   {
     path: "/",
     element: (
       <Layout>
-        <LandingPage />
+        <LibraryPage />
       </Layout>
     ),
   },
-
   {
     path: "/book/:id",
     element: (
       <Layout>
         <BookDetails />
+      </Layout>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <Layout>
+        <RegistrationPage />
       </Layout>
     ),
   },

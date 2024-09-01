@@ -17,12 +17,8 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({
 }) => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const isLoginPage =
-    currentPath.includes("login-signup") &&
-    new URLSearchParams(location.search).get("isLogin") === "true";
-  const isRegisterPage =
-    currentPath.includes("login-signup") &&
-    new URLSearchParams(location.search).get("isLogin") === "false";
+  const isLoginPage = currentPath === "/login";
+  const isRegisterPage = currentPath === "/register";
 
   return (
     <div
@@ -30,10 +26,10 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({
     >
       {isLoggedIn ? (
         <button
-          className="px-4 py-2 bg-accent text-textLight rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-accent"
+          className="px-4 py-2 rounded bg-accent text-textLight hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-accent"
           onClick={() => {
             handleLogout();
-            if (isMobile) toggleMenu(); // Close menu on mobile after clicking logout
+            if (isMobile) toggleMenu();
           }}
         >
           Logout
@@ -42,10 +38,10 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({
         <>
           {!isLoginPage && (
             <Link
-              to="/login-signup?isLogin=true"
-              className="px-4 py-2 bg-secondary text-textLight rounded hover:bg-primary focus:outline-none focus:ring-2 focus:ring-secondary"
+              to="/login"
+              className="px-4 py-2 rounded bg-secondary text-textLight hover:bg-primary focus:outline-none focus:ring-2 focus:ring-secondary"
               onClick={() => {
-                if (isMobile) toggleMenu(); // Close menu on mobile after clicking login
+                if (isMobile) toggleMenu();
               }}
             >
               Login
@@ -53,10 +49,10 @@ const AuthButtons: React.FC<AuthButtonsProps> = ({
           )}
           {!isRegisterPage && (
             <Link
-              to="/login-signup?isLogin=false"
-              className="px-4 py-2 bg-backgroundLight text-textDark rounded hover:bg-primary hover:text-textLight focus:outline-none focus:ring-2 focus:ring-secondary"
+              to="/register"
+              className="px-4 py-2 rounded bg-backgroundLight text-textDark hover:bg-primary hover:text-textLight focus:outline-none focus:ring-2 focus:ring-secondary"
               onClick={() => {
-                if (isMobile) toggleMenu(); // Close menu on mobile after clicking register
+                if (isMobile) toggleMenu();
               }}
             >
               Register
