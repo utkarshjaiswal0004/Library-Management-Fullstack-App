@@ -1,35 +1,12 @@
-import React, { useState, useEffect, memo } from "react";
+// src/components/Navbar.tsx
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useNav } from "../../../context/nav-context";
 import AuthButtons from "./auth-buttons";
-
-// Define the type for navigation link
-type NavLink = {
-  text: string;
-  url: string;
-};
-
-const NavLinkItem: React.FC<
-  NavLink & {
-    setActiveNav: (url: string) => void;
-    isMobile: boolean;
-    toggleMenu: () => void;
-    activeNav: string;
-  }
-> = memo(({ text, url, setActiveNav, isMobile, toggleMenu, activeNav }) => (
-  <li>
-    <Link
-      to={url}
-      className={`block px-4 py-2 hover:text-secondary ${activeNav === url ? "text-secondary font-bold" : ""}`}
-      onClick={() => {
-        setActiveNav(url);
-        if (isMobile) toggleMenu(); // Close menu on mobile after clicking a link
-      }}
-    >
-      {text}
-    </Link>
-  </li>
-));
+import NavLinkItem from "./nav-link";
+import { getNavLinks } from "../../../utils/nav-links";
+import { NavLink } from "../../interfaces/nav-links";
+import { UserInfo } from "../../interfaces/user";
 
 const Navbar: React.FC = () => {
   const { activeNav, setActiveNav } = useNav();
@@ -37,6 +14,7 @@ const Navbar: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
     !!localStorage.getItem("token"),
   );
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined); // User info state
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const location = useLocation();
 
@@ -48,29 +26,27 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     setIsLoggedIn(!!localStorage.getItem("token"));
-  }, [location]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
-  };
+    if (isLoggedIn) {
+      const user = JSON.parse(
+        localStorage.getItem("userInfo") || "{}",
+      ) as UserInfo;
+      setUserInfo(user);
+    }
+  }, [location, isLoggedIn]);
 
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
-  };
+  }, []);
 
-  const navLinks: NavLink[] = isLoggedIn
-    ? [
-        { text: "Library", url: "/" },
-        { text: "Browse Books", url: "/books" },
-        { text: "My Borrowed Books", url: "/my-borrowed-books" },
-        { text: "Return Books", url: "/return-books" },
-        { text: "Admin Dashboard", url: "/admin/dashboard" },
-      ]
-    : [
-        { text: "Library", url: "/" },
-        { text: "Browse Books", url: "/books" },
-      ];
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userInfo");
+    setIsLoggedIn(false);
+    setUserInfo(undefined);
+  }, []);
+
+  const navLinks: NavLink[] = getNavLinks(isLoggedIn, userInfo);
 
   return (
     <nav className="fixed w-full py-4 bg-backgroundDark text-textLight shadow-lg top-0 z-50">
@@ -94,7 +70,7 @@ const Navbar: React.FC = () => {
           <ul
             className={`flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 ${isMobile && !isMenuOpen ? "hidden" : "block"}`}
           >
-            {navLinks.map((link) => (
+            {navLinks.map((link: NavLink) => (
               <NavLinkItem
                 key={link.url}
                 {...link}
