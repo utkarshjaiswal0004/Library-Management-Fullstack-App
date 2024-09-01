@@ -4,8 +4,8 @@ import { useNav } from "../../../context/nav-context";
 import AuthButtons from "./auth-buttons";
 import NavLinkItem from "./nav-link";
 import { getNavLinks } from "../../../utils/nav-links";
-import { NavLink } from "../../interfaces/nav-links";
-import { UserInfo } from "../../interfaces/user";
+import { NavLink } from "../../../interfaces/nav-links";
+import { UserInfo } from "../../../interfaces/user";
 
 const Navbar: React.FC = () => {
   const { activeNav, setActiveNav } = useNav();
