@@ -2,5 +2,5 @@ export interface UserInfo {
   name: string;
   email: string;
   role: string;
-  permissions: string[];
+  borrowedBooks?: [string, string] | [];
 }

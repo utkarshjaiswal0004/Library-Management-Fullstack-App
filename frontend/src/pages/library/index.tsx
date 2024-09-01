@@ -1,14 +1,14 @@
-// src/components/Library.tsx
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Book } from "../../interfaces/book";
-import "../../styles/shimmer.css";
 import { fetchBooks } from "../../services/book/book-service";
-import ShimmerCard from "../../component/shimmer-card";
 import BookCard from "../../component/book-card";
+import ShimmerCard from "../../component/shimmer-card";
 
 const Library: React.FC = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -21,14 +21,15 @@ const Library: React.FC = () => {
   }, []);
 
   const handleBookClick = (book: Book) => {
-    console.log("Book clicked:", book);
+    // Navigate to the book details page with the book ID
+    navigate(`/book/${book.id}`);
   };
 
   return (
-    <div className="p-6 bg-backgroundLight min-h-screen">
-      <h1 className="text-3xl font-bold text-primary mb-6">Library</h1>
+    <div className="min-h-screen p-6 bg-backgroundLight">
+      <h1 className="mb-6 text-3xl font-bold text-primary">Library</h1>
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {[...Array(8)].map((_, index) => (
             <ShimmerCard key={index} />
           ))}
@@ -36,9 +37,9 @@ const Library: React.FC = () => {
       ) : books.length === 0 ? (
         <p className="text-center text-textDark">No books available</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {books.map((book) => (
-            <BookCard onClick={handleBookClick} book={book} />
+            <BookCard key={book.id} book={book} onClick={handleBookClick} />
           ))}
         </div>
       )}
