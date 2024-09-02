@@ -1,10 +1,8 @@
 const bcrypt = require("bcrypt");
 
-// Hash password before saving user
-const hashPassword = async (user) => {
-  if (user.isModified("password")) {
-    user.password = await bcrypt.hash(user.password, 10);
-  }
+// Hash password
+const hashPassword = async (password) => {
+  return await bcrypt.hash(password, 10);
 };
 
 // Compare passwords

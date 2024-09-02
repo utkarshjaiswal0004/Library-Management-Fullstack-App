@@ -1,11 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider } from "react-router-dom";
-
+import { AuthProvider } from "./context/auth-context";
 import "./index.css";
-import routes from "./routes";
+import AppRoutes from "./routes";
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <RouterProvider router={routes} />
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   </React.StrictMode>,
 );

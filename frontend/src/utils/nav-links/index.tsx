@@ -17,7 +17,6 @@ export const getNavLinks = (
     { text: "Admin Dashboard", url: "/admin/dashboard" },
   ];
 
-  // Optionally include a user-specific link
   if (userInfo) {
     loggedInLinks.push({ text: `Welcome, ${userInfo.name}`, url: "/profile" });
   }

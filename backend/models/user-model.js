@@ -15,7 +15,9 @@ const UserSchema = new mongoose.Schema({
 
 // Hash password before saving user
 UserSchema.pre("save", async function (next) {
-  await hashPassword(this);
+  if (this.isModified("password")) {
+    this.password = await hashPassword(this.password);
+  }
   next();
 });
 

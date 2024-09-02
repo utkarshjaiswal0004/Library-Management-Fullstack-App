@@ -1,4 +1,25 @@
 const User = require("../models/user-model");
+const { hashPassword } = require("../utils/auth-utils");
+
+const registerUser = async (name, email, password) => {
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    throw new Error("User already exists");
+  }
+
+  const hashedPassword = await hashPassword(password);
+
+  const newUser = new User({
+    name,
+    email,
+    password: hashedPassword,
+  });
+
+  await newUser.save();
+
+  // Return user details
+  return newUser;
+};
 
 const loginUser = async (email, password) => {
   const user = await User.findOne({ email });
@@ -37,4 +58,4 @@ const logoutUser = async (token) => {
   await user.save();
 };
 
-module.exports = { loginUser, refreshToken, logoutUser };
+module.exports = { registerUser, loginUser, refreshToken, logoutUser };

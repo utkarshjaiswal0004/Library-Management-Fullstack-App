@@ -1,16 +1,18 @@
-import { createBrowserRouter } from "react-router-dom";
-import Layout from "../component/layout";
-import NotFound from "../component/not-found";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
 import LibraryPage from "../pages/library";
 import BookDetails from "../pages/book-details";
 import RegistrationPage from "../pages/registration";
+import Layout from "../component/layout";
+import NotFound from "../component/not-found";
+import PrivateRoute from "../component/private-route";
 
 const routes = createBrowserRouter([
   {
     path: "/",
     element: (
       <Layout>
-        <LibraryPage />
+        <PrivateRoute element={<LibraryPage />} />
       </Layout>
     ),
   },
@@ -18,7 +20,7 @@ const routes = createBrowserRouter([
     path: "/book/:id",
     element: (
       <Layout>
-        <BookDetails />
+        <PrivateRoute element={<BookDetails />} />
       </Layout>
     ),
   },
@@ -40,4 +42,7 @@ const routes = createBrowserRouter([
   },
 ]);
 
-export default routes;
+// Export RouterProvider to use in index.tsx
+const AppRoutes = () => <RouterProvider router={routes} />;
+
+export default AppRoutes;
