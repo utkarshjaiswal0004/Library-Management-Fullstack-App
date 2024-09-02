@@ -12,11 +12,9 @@ const register = async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully", user });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        error: "An error occurred during registration: " + error.message,
-      });
+    res.status(500).json({
+      error: "An error occurred during registration: " + error.message,
+    });
   }
 };
 
@@ -52,6 +50,23 @@ const refreshToken = async (req, res) => {
       .json({ error: "Invalid or expired refresh token: " + error.message });
   }
 };
+const fetchUserFromToken = async (req, res) => {
+  try {
+    const authHeader = req.body.headers.Authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(400).json({ error: "Access token is required" });
+    }
+
+    const accessToken = authHeader.split(" ")[1];
+
+    const user = await authService.fetchUserFromToken(accessToken);
+    res.status(200).json({ user });
+  } catch (error) {
+    res
+      .status(403)
+      .json({ error: "Invalid or expired access token: " + error.message });
+  }
+};
 
 const logout = async (req, res) => {
   try {
@@ -69,4 +84,4 @@ const logout = async (req, res) => {
   }
 };
 
-module.exports = { register, login, refreshToken, logout };
+module.exports = { register, login, refreshToken, fetchUserFromToken, logout };

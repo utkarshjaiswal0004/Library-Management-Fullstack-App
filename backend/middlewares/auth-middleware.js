@@ -1,33 +1,42 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user-model");
 
-// Middleware to authenticate JWT and add user to request
 const authenticateJWT = async (req, res, next) => {
   try {
+    // Extract the authorization header
     const authHeader = req.headers.authorization;
 
+    // Check if the authorization header is present and correctly formatted
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res
+        .status(401)
+        .json({ error: "Unauthorized: Token missing or malformed" });
     }
 
+    // Extract the token from the header
     const token = authHeader.split(" ")[1];
 
-    // Verify the token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Verify the token using the secret
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-    // Fetch the user from the database
     const user = await User.findById(decoded.id);
     if (!user) {
-      return res.status(401).json({ error: "User not found" });
+      return res.status(401).json({ error: "Unauthorized: User not found" });
     }
 
-    // Attach user to request object
     req.user = user;
 
-    // Proceed to the next middleware or route handler
     next();
   } catch (err) {
-    res.status(403).json({ error: "Invalid or expired token" });
+    if (err.name === "JsonWebTokenError") {
+      return res.status(401).json({ error: "Unauthorized: Invalid token" });
+    } else if (err.name === "TokenExpiredError") {
+      return res.status(403).json({ error: "Forbidden: Token expired" });
+    }
+
+    res
+      .status(500)
+      .json({ error: "Internal Server Error: Something went wrong" });
   }
 };
 

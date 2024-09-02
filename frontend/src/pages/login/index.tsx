@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { login } from "../../services/auth/auth-service";
+import React, { useState, useCallback } from "react";
+import { login as loginService } from "../../services/auth/auth-service";
 import Button from "../../component/button";
 import Input from "../../component/input";
 import { useAuth } from "../../context/auth-context";
@@ -18,36 +18,53 @@ const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { login: contextLogin } = useAuth(); // Use the login function from AuthContext
+  const { login: contextLogin } = useAuth();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setForm({
-      ...form,
+    setForm((prevForm) => ({
+      ...prevForm,
       [name]: value,
-    });
-  };
+    }));
+  }, []);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    try {
-      const { accessToken, refreshToken } = await login(
-        form.email,
-        form.password,
-      );
-      setSuccess("Login successful! Redirecting...");
-      contextLogin(accessToken, refreshToken); // Use contextLogin to update the login state in the context
-      window.location.href = "/library";
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError("An unexpected error occurred");
+      setIsSubmitting(true);
+      setError(null); // Clear previous errors
+      setSuccess(null); // Clear previous success message
+
+      try {
+        const { user, accessToken, refreshToken } = await loginService(
+          form.email,
+          form.password,
+        );
+
+        setSuccess("Login successful! Redirecting...");
+        contextLogin(user, accessToken, refreshToken); // Update context with user data
+
+        // Redirect after a brief delay to allow the success message to be displayed
+        setTimeout(() => {
+          window.location.href = "/library";
+        }, 1000);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unexpected error occurred");
+        }
+      } finally {
+        setIsSubmitting(false);
       }
-    }
-  };
+    },
+    [form, contextLogin],
+  );
+
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   return (
     <div className="flex items-center justify-center pt-20 bg-backgroundLight">
@@ -73,12 +90,12 @@ const LoginPage: React.FC = () => {
           value={form.password}
           onChange={handleChange}
           placeholder="******************"
-          showPasswordToggle={() => setShowPassword((prev) => !prev)}
+          showPasswordToggle={togglePasswordVisibility}
           showPassword={showPassword}
           ariaLabel={showPassword ? "Hide password" : "Show password"}
         />
-        <Button type="submit" className="w-full">
-          Login
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
+          {isSubmitting ? "Logging in..." : "Login"}
         </Button>
       </form>
     </div>

@@ -1,5 +1,6 @@
 const User = require("../models/user-model");
 const { hashPassword } = require("../utils/auth-utils");
+const jwt = require("jsonwebtoken");
 
 const registerUser = async (name, email, password) => {
   const existingUser = await User.findOne({ email });
@@ -43,6 +44,20 @@ const refreshToken = async (token) => {
   return newAccessToken;
 };
 
+const fetchUserFromToken = async (accessToken) => {
+  try {
+    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
+    const user = await User.findById(decoded.id);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  } catch (error) {
+    console.log(error.message);
+    throw new Error(error.message || "Failed to fetch user information");
+  }
+};
+
 const logoutUser = async (token) => {
   const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
   const user = await User.findById(decoded.id);
@@ -54,4 +69,10 @@ const logoutUser = async (token) => {
   await user.save();
 };
 
-module.exports = { registerUser, loginUser, refreshToken, logoutUser };
+module.exports = {
+  registerUser,
+  loginUser,
+  refreshToken,
+  fetchUserFromToken,
+  logoutUser,
+};

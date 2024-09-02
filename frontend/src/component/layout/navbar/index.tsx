@@ -24,10 +24,10 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      const user = JSON.parse(
-        localStorage.getItem("userInfo") || "{}",
-      ) as UserInfo;
-      setUserInfo(user);
+      const storedUserInfo = localStorage.getItem("userInfo");
+      if (storedUserInfo) {
+        setUserInfo(JSON.parse(storedUserInfo) as UserInfo);
+      }
     }
   }, [location, isAuthenticated]);
 
@@ -36,11 +36,15 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleLogout = useCallback(() => {
-    logout(); // Use the logout function from AuthContext
+    logout();
     setUserInfo(undefined);
   }, [logout]);
 
   const navLinks: NavLink[] = getNavLinks(isAuthenticated, userInfo);
+
+  const menuClasses = `flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 ${
+    isMobile && !isMenuOpen ? "hidden" : "block"
+  }`;
 
   return (
     <nav className="fixed top-0 z-50 w-full py-4 shadow-lg bg-backgroundDark text-textLight">
@@ -58,17 +62,9 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-        <div
-          className={`lg:flex lg:space-x-6 lg:items-center ${
-            isMobile && !isMenuOpen ? "hidden" : "block"
-          }`}
-        >
-          <ul
-            className={`flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 ${
-              isMobile && !isMenuOpen ? "hidden" : "block"
-            }`}
-          >
-            {navLinks.map((link: NavLink) => (
+        <div className={`lg:flex lg:items-center ${menuClasses}`}>
+          <ul className={menuClasses}>
+            {navLinks.map((link) => (
               <NavLinkItem
                 key={link.url}
                 {...link}
