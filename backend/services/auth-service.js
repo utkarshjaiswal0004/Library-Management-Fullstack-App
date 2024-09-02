@@ -29,7 +29,7 @@ const loginUser = async (email, password) => {
   user.refreshToken = refreshToken;
   await user.save();
 
-  return { accessToken, refreshToken };
+  return { user, accessToken, refreshToken };
 };
 
 const refreshToken = async (token) => {

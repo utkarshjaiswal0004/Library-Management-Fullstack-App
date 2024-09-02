@@ -12,20 +12,28 @@ const register = async (req, res) => {
 
     res.status(201).json({ message: "User registered successfully", user });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res
+      .status(500)
+      .json({
+        error: "An error occurred during registration: " + error.message,
+      });
   }
 };
 
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const { accessToken, refreshToken } = await authService.loginUser(
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    const { user, accessToken, refreshToken } = await authService.loginUser(
       email,
       password
     );
-    res.json({ accessToken, refreshToken });
+    res.status(200).json({ user, accessToken, refreshToken });
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    res.status(401).json({ error: "Invalid credentials: " + error.message });
   }
 };
 
@@ -33,13 +41,15 @@ const refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.body;
     if (!refreshToken) {
-      return res.status(401).json({ error: "No refresh token provided" });
+      return res.status(400).json({ error: "Refresh token is required" });
     }
 
     const newAccessToken = await authService.refreshToken(refreshToken);
-    res.json({ accessToken: newAccessToken });
+    res.status(200).json({ accessToken: newAccessToken });
   } catch (error) {
-    res.status(403).json({ error: error.message });
+    res
+      .status(403)
+      .json({ error: "Invalid or expired refresh token: " + error.message });
   }
 };
 
@@ -47,13 +57,15 @@ const logout = async (req, res) => {
   try {
     const { refreshToken } = req.body;
     if (!refreshToken) {
-      return res.status(401).json({ error: "No refresh token provided" });
+      return res.status(400).json({ error: "Refresh token is required" });
     }
 
     await authService.logoutUser(refreshToken);
-    res.json({ message: "Logged out successfully" });
+    res.status(204).json({ message: "Logged out successfully" });
   } catch (error) {
-    res.status(403).json({ error: error.message });
+    res
+      .status(500)
+      .json({ error: "An error occurred during logout: " + error.message });
   }
 };
 
