@@ -5,11 +5,13 @@ import BookDetails from "../pages/book-details";
 import RegistrationPage from "../pages/registration";
 import Layout from "../component/layout";
 import NotFound from "../component/not-found";
-import PrivateRoute from "../component/private-route";
+import PrivateRoute from "./private-route";
+import PublicRoute from "./public-route"; // Import PublicRoute
+import LoginPage from "../pages/login";
 
 const routes = createBrowserRouter([
   {
-    path: "/",
+    path: "/library",
     element: (
       <Layout>
         <PrivateRoute element={<LibraryPage />} />
@@ -28,7 +30,16 @@ const routes = createBrowserRouter([
     path: "/register",
     element: (
       <Layout>
-        <RegistrationPage />
+        <PublicRoute element={<RegistrationPage />} redirectTo="/" />
+      </Layout>
+    ),
+  },
+
+  {
+    path: "/login",
+    element: (
+      <Layout>
+        <PublicRoute element={<LoginPage />} redirectTo="/" />
       </Layout>
     ),
   },

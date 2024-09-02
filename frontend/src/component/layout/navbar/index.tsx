@@ -6,13 +6,12 @@ import { NavLink } from "../../../interfaces/nav-links";
 import { UserInfo } from "../../../interfaces/user";
 import AuthButtons from "./auth-buttons";
 import NavLinkItem from "./nav-link";
+import { useAuth } from "../../../context/auth-context";
 
 const Navbar: React.FC = () => {
   const { activeNav, setActiveNav } = useNav();
+  const { isAuthenticated, logout } = useAuth();
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 860);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
-    !!localStorage.getItem("token"),
-  );
   const [userInfo, setUserInfo] = useState<UserInfo | undefined>(undefined);
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
   const location = useLocation();
@@ -24,27 +23,24 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    setIsLoggedIn(!!localStorage.getItem("token"));
-    if (isLoggedIn) {
+    if (isAuthenticated) {
       const user = JSON.parse(
         localStorage.getItem("userInfo") || "{}",
       ) as UserInfo;
       setUserInfo(user);
     }
-  }, [location, isLoggedIn]);
+  }, [location, isAuthenticated]);
 
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
   }, []);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userInfo");
-    setIsLoggedIn(false);
+    logout(); // Use the logout function from AuthContext
     setUserInfo(undefined);
-  }, []);
+  }, [logout]);
 
-  const navLinks: NavLink[] = getNavLinks(isLoggedIn, userInfo);
+  const navLinks: NavLink[] = getNavLinks(isAuthenticated, userInfo);
 
   return (
     <nav className="fixed top-0 z-50 w-full py-4 shadow-lg bg-backgroundDark text-textLight">
@@ -84,13 +80,20 @@ const Navbar: React.FC = () => {
             ))}
           </ul>
 
-          <AuthButtons
-            isLoggedIn={isLoggedIn}
-            isMobile={isMobile}
-            isMenuOpen={isMenuOpen}
-            handleLogout={handleLogout}
-            toggleMenu={toggleMenu}
-          />
+          {isAuthenticated ? (
+            <button
+              className="px-4 py-2 text-white bg-red-600 rounded focus:outline-none"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          ) : (
+            <AuthButtons
+              isMobile={isMobile}
+              isMenuOpen={isMenuOpen}
+              toggleMenu={toggleMenu}
+            />
+          )}
         </div>
       </div>
     </nav>

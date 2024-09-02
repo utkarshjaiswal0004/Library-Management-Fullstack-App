@@ -13,16 +13,8 @@ const UserSchema = new mongoose.Schema({
   borrowedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
 });
 
-// Hash password before saving user
-UserSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
-    this.password = await hashPassword(this.password);
-  }
-  next();
-});
-
 // Compare passwords
-UserSchema.methods.comparePassword = async function (candidatePassword) {
+UserSchema.methods.comparePassword = function (candidatePassword) {
   return comparePassword(candidatePassword, this.password);
 };
 
