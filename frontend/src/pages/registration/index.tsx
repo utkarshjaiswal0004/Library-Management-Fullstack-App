@@ -1,8 +1,19 @@
 import React, { useState } from "react";
+import { register } from "../../services/auth/auth-service";
+
 import Button from "../../component/button";
 import Input from "../../component/input";
-const RegistrationPage: React.FC = () => {
-  const [form, setForm] = useState({
+
+interface FormState {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+const RegistrationForm: React.FC = () => {
+  const [form, setForm] = useState<FormState>({
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -10,6 +21,8 @@ const RegistrationPage: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -19,13 +32,28 @@ const RegistrationPage: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
-    console.log("Form submitted", form);
+
+    try {
+      const { token } = await register(form.name, form.email, form.password);
+      setSuccess("Registration successful! Redirecting...");
+      localStorage.setItem("authToken", token);
+      window.location.href = "/login";
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        // Handle known error instance
+        setError(err.message);
+      } else {
+        // Handle unexpected error
+        setError("An unexpected error occurred");
+      }
+    }
   };
 
   return (
@@ -34,6 +62,17 @@ const RegistrationPage: React.FC = () => {
         onSubmit={handleSubmit}
         className="w-full max-w-md px-8 pt-6 pb-8 mb-4 bg-white rounded shadow-md"
       >
+        {error && <p className="mb-4 text-red-500">{error}</p>}
+        {success && <p className="mb-4 text-green-500">{success}</p>}
+        <Input
+          id="name"
+          name="name"
+          type="text"
+          value={form.name}
+          onChange={handleChange}
+          placeholder="Name"
+          required
+        />
         <Input
           id="email"
           name="email"
@@ -77,4 +116,4 @@ const RegistrationPage: React.FC = () => {
   );
 };
 
-export default RegistrationPage;
+export default RegistrationForm;

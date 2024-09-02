@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
 const connectDB = require("./config/db");
+const authRoutes = require("./routes/auth-route");
 const bookRoutes = require("./routes/book-route");
 const userRoutes = require("./routes/user-route");
-const authenticateJWT = require("./middlewares/auth-middleware"); // Import your JWT middleware
+const authenticateJWT = require("./middlewares/auth-middleware");
+const cors = require("cors");
 
 require("dotenv").config();
 
@@ -11,12 +13,15 @@ require("dotenv").config();
 connectDB();
 
 // Middleware
+app.use(cors());
 app.use(express.json());
-app.use(authenticateJWT); // Apply JWT authentication middleware to all routes
+
+app.use("/api/auth", authRoutes);
 
 // Routes
-app.use("/books", bookRoutes);
-app.use("/users", userRoutes);
+app.use(authenticateJWT);
+app.use("/api//books", bookRoutes);
+app.use("/api//users", userRoutes);
 
 // Start server
 const PORT = process.env.PORT || 3000;
