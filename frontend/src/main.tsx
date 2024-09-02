@@ -5,9 +5,7 @@ import "./index.css";
 import AppRoutes from "./routes";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
-  </React.StrictMode>,
+  <AuthProvider>
+    <AppRoutes />
+  </AuthProvider>,
 );

@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useMemo,
+} from "react";
 import { useLocation } from "react-router-dom";
 
 interface NavContextType {
@@ -16,7 +23,7 @@ export const useNav = () => {
   return context;
 };
 
-export const NavProvider = ({ children }: { children: React.ReactNode }) => {
+export const NavProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();
   const [activeNav, setActiveNav] = useState(location.pathname);
 
@@ -24,9 +31,12 @@ export const NavProvider = ({ children }: { children: React.ReactNode }) => {
     setActiveNav(location.pathname);
   }, [location]);
 
+  const contextValue = useMemo(
+    () => ({ activeNav, setActiveNav }),
+    [activeNav],
+  );
+
   return (
-    <NavContext.Provider value={{ activeNav, setActiveNav }}>
-      {children}
-    </NavContext.Provider>
+    <NavContext.Provider value={contextValue}>{children}</NavContext.Provider>
   );
 };
