@@ -21,14 +21,11 @@ const registerUser = async (name, email, password) => {
 const loginUser = async (email, password) => {
   const user = await User.findOne({ email });
   if (!user || !(await user.comparePassword(password))) {
-    throw new Error("Invalid credentials");
+    throw new Error("Invalid email or password");
   }
 
   const accessToken = user.generateAccessToken();
   const refreshToken = user.generateRefreshToken();
-
-  user.refreshToken = refreshToken;
-  await user.save();
 
   return { user, accessToken, refreshToken };
 };
@@ -36,7 +33,7 @@ const loginUser = async (email, password) => {
 const refreshToken = async (token) => {
   const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
   const user = await User.findById(decoded.id);
-  if (!user || user.refreshToken !== token) {
+  if (!user) {
     throw new Error("Invalid refresh token");
   }
 
@@ -45,28 +42,12 @@ const refreshToken = async (token) => {
 };
 
 const fetchUserFromToken = async (accessToken) => {
-  try {
-    const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      throw new Error("User not found");
-    }
-    return user;
-  } catch (error) {
-    console.log(error.message);
-    throw new Error(error.message || "Failed to fetch user information");
-  }
-};
-
-const logoutUser = async (token) => {
-  const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+  const decoded = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET);
   const user = await User.findById(decoded.id);
-  if (!user || user.refreshToken !== token) {
-    throw new Error("Invalid refresh token");
+  if (!user) {
+    throw new Error("User not found");
   }
-
-  user.refreshToken = null;
-  await user.save();
+  return user;
 };
 
 module.exports = {
@@ -74,5 +55,4 @@ module.exports = {
   loginUser,
   refreshToken,
   fetchUserFromToken,
-  logoutUser,
 };
