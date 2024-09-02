@@ -3,6 +3,7 @@ import { login as loginService } from "../../services/auth/auth-service";
 import Button from "../../component/button";
 import Input from "../../component/input";
 import { useAuth } from "../../context/auth-context";
+import { useNavigate } from "react-router-dom";
 
 interface FormState {
   email: string;
@@ -21,6 +22,7 @@ const LoginPage: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { login: contextLogin } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,22 +37,18 @@ const LoginPage: React.FC = () => {
       e.preventDefault();
 
       setIsSubmitting(true);
-      setError(null); // Clear previous errors
-      setSuccess(null); // Clear previous success message
+      setError(null);
+      setSuccess(null);
 
       try {
-        const { user, accessToken, refreshToken } = await loginService(
+        const { user, accessToken } = await loginService(
           form.email,
           form.password,
         );
 
         setSuccess("Login successful! Redirecting...");
-        contextLogin(user, accessToken, refreshToken); // Update context with user data
-
-        // Redirect after a brief delay to allow the success message to be displayed
-        setTimeout(() => {
-          window.location.href = "/library";
-        }, 1000);
+        contextLogin(user, accessToken);
+        navigate("/library");
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -61,7 +59,7 @@ const LoginPage: React.FC = () => {
         setIsSubmitting(false);
       }
     },
-    [form, contextLogin],
+    [contextLogin, form.email, form.password, navigate],
   );
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);

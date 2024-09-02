@@ -34,11 +34,14 @@ export const login = async (
   password: string,
 ): Promise<LoginResponse> => {
   try {
-    const response = await axios.post(`${API_URL}auth/login`, {
-      email,
-      password,
-    });
-
+    const response = await axios.post(
+      `${API_URL}auth/login`,
+      {
+        email,
+        password,
+      },
+      { withCredentials: true },
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -53,7 +56,6 @@ export const fetchUserFromToken = async (
   accessToken: string,
 ): Promise<UserInfo> => {
   try {
-    console.log("fetchUserFromToken called");
     const response = await axios.post(`${API_URL}auth/fetchUserFromToken`, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -74,17 +76,30 @@ export const fetchUserFromToken = async (
   }
 };
 
-export const refreshToken = async (refreshToken: string) => {
+export const refreshToken = async (accessToken: string) => {
   try {
     const response = await axios.post(`${API_URL}auth/refresh-token`, {
-      refreshToken,
+      accessToken,
     });
-    return response.data; // { accessToken }
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(error.response.data.message || "Token refresh failed");
     } else {
       throw new Error("Token refresh failed due to an unknown error");
+    }
+  }
+};
+
+export const userLogout = async () => {
+  try {
+    await axios.post(`${API_URL}auth/logout`, {}, { withCredentials: true });
+    return;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Logout failed");
+    } else {
+      throw new Error("Logout failed due to an unknown error");
     }
   }
 };

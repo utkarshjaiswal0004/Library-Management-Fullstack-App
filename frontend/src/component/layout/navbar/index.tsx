@@ -35,7 +35,7 @@ const Navbar: React.FC = () => {
     setIsMenuOpen((prev) => !prev);
   }, []);
 
-  const handleLogout = useCallback(() => {
+  const handleLogout = useCallback(async () => {
     logout();
     setUserInfo(undefined);
   }, [logout]);

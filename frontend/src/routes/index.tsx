@@ -53,7 +53,6 @@ const routes = createBrowserRouter([
   },
 ]);
 
-// Export RouterProvider to use in index.tsx
 const AppRoutes = () => <RouterProvider router={routes} />;
 
 export default AppRoutes;
