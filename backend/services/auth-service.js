@@ -6,9 +6,7 @@ const registerUser = async (name, email, password) => {
   if (existingUser) {
     throw new Error("User already exists");
   }
-
-  const hashedPassword = await hashPassword(password);
-
+  const hashedPassword = hashPassword(password);
   const newUser = new User({
     name,
     email,
@@ -16,8 +14,6 @@ const registerUser = async (name, email, password) => {
   });
 
   await newUser.save();
-
-  // Return user details
   return newUser;
 };
 

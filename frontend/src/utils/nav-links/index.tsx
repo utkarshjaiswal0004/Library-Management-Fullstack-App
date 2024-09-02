@@ -5,20 +5,22 @@ export const getNavLinks = (
   isLoggedIn: boolean,
   userInfo?: UserInfo,
 ): NavLink[] => {
-  const defaultLinks: NavLink[] = [
-    { text: "Library", url: "/" },
-    { text: "Browse Books", url: "/books" },
-  ];
+  const defaultLinks: NavLink[] = [];
 
   const loggedInLinks: NavLink[] = [
     ...defaultLinks,
+    { text: "Library", url: "/library" },
     { text: "My Borrowed Books", url: "/my-borrowed-books" },
-    { text: "Return Books", url: "/return-books" },
-    { text: "Admin Dashboard", url: "/admin/dashboard" },
+    { text: "History", url: "/history" },
   ];
 
-  if (userInfo) {
-    loggedInLinks.push({ text: `Welcome, ${userInfo.name}`, url: "/profile" });
+  const adminLinks: NavLink[] = [
+    { text: "Inventory", url: "/admin/inventory" },
+    { text: "Add Book", url: "/admin/add-book" },
+  ];
+
+  if (userInfo && userInfo.role == "admin") {
+    loggedInLinks.push(...adminLinks);
   }
 
   return isLoggedIn ? loggedInLinks : defaultLinks;

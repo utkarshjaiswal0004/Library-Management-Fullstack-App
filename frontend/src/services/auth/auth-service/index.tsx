@@ -20,3 +20,19 @@ export const register = async (
     }
   }
 };
+
+export const login = async (email: string, password: string) => {
+  try {
+    const response = await axios.post(`${API_URL}auth/login`, {
+      email,
+      password,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Login failed");
+    } else {
+      throw new Error("Login failed due to an unknown error");
+    }
+  }
+};
