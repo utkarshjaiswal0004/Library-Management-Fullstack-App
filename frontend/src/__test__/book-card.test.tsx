@@ -5,7 +5,6 @@ import { Book } from "../interfaces/book";
 
 describe("BookCard Component", () => {
   const book: Book = {
-    id: "1",
     title: "Book 1",
     author: "Author 1",
     imageUrl: "/image1.jpg",
@@ -14,7 +13,7 @@ describe("BookCard Component", () => {
   };
 
   it("should render book card with correct details", () => {
-    render(<BookCard book={book} onClick={() => {}} />);
+    render(<BookCard book={book} onClick={() => { }} />);
 
     expect(screen.getByText("Book 1")).toBeInTheDocument();
     expect(screen.getByText("Author: Author 1")).toBeInTheDocument();

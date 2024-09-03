@@ -16,7 +16,7 @@ describe("Library Component", () => {
     (fetchBooks as vi.Mock).mockResolvedValue(books);
 
     // Mock console.log to test the click event
-    const consoleLog = vi.spyOn(console, "log").mockImplementation(() => {});
+    const consoleLog = vi.spyOn(console, "log").mockImplementation(() => { });
     render(<Library />);
 
     // Wait for book card to appear and then simulate a click
@@ -31,7 +31,7 @@ describe("Library Component", () => {
 
   it("should render shimmer effect while loading", async () => {
     // Mock fetchBooks to simulate loading
-    (fetchBooks as vi.Mock).mockResolvedValueOnce(new Promise(() => {}));
+    (fetchBooks as vi.Mock).mockResolvedValueOnce(new Promise(() => { }));
 
     render(<Library />);
 

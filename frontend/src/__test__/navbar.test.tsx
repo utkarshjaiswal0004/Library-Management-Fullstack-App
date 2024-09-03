@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, it, expect, vi } from "vitest";
-import Navbar from "../component/layout/navbar";
+import Navbar from "../pages/layout/navbar";
 
 // useNav hook mock
 vi.mock("../context/nav-context", () => ({
