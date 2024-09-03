@@ -6,7 +6,6 @@ const bookRoutes = require("./routes/book-route");
 const userRoutes = require("./routes/user-route");
 const authenticateJWT = require("./middlewares/auth-middleware");
 const cors = require("cors");
-
 const cookieParser = require("cookie-parser");
 
 require("dotenv").config();
@@ -16,12 +15,14 @@ connectDB();
 
 // Middleware
 app.use(
-  cors()
-  //   {
-  //   origin: process.env.FRONTEND_URL,
-  //   credentials: true,
-  // }
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
 );
+
 app.use(cookieParser());
 app.use(express.json());
 
