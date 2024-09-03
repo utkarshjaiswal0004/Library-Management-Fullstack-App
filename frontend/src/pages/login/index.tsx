@@ -65,11 +65,15 @@ const LoginPage: React.FC = () => {
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   return (
-    <div className="flex items-center justify-center pt-20 bg-backgroundLight">
+    <div className="flex items-center justify-center pt-20 m-5 bg-backgroundLight">
+
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md px-8 pt-6 pb-8 mb-4 bg-white rounded shadow-md"
       >
+        <h1 className="mb-4 text-2xl font-bold text-center text-textDark md:text-3xl">
+          Login
+        </h1>
         {error && <p className="mb-4 text-red-500">{error}</p>}
         {success && <p className="mb-4 text-green-500">{success}</p>}
         <Input
