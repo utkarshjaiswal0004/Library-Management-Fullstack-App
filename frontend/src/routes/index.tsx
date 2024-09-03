@@ -10,6 +10,7 @@ import PublicRoute from "./public-route";
 import LoginPage from "../pages/login";
 import AddBookPage from "../pages/add-book";
 import BorrowedBooks from "../pages/borrowed-books";
+import HomePage from "../pages/home-page";
 
 const LayoutWrapper = () => (
   <Layout>
@@ -24,7 +25,7 @@ const routes = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <PrivateRoute element={<LibraryPage />} />,
+        element: <HomePage />,
       },
       {
         path: "library",
