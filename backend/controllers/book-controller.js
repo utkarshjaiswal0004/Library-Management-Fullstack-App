@@ -30,8 +30,23 @@ const getBookById = async (req, res) => {
   }
 };
 
+const deleteBook = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await bookService.deleteBookById(id);
+    if (result) {
+      res.status(200).json({ message: "Book deleted successfully" });
+    } else {
+      res.status(404).json({ message: "Book not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   createBook,
   getBooks,
   getBookById,
+  deleteBook,
 };

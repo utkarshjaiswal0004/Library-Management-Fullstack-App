@@ -43,7 +43,25 @@ const returnBook = async (userId, bookId) => {
   }
 };
 
+const fetchBorrowedBooks = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const borrowedBookIds = user.borrowedBooks;
+    const borrowedBooks = await Book.find({ _id: { $in: borrowedBookIds } });
+
+    return borrowedBooks;
+  } catch (error) {
+    throw new Error(`Error fetching borrowed books: ${error.message}`);
+  }
+};
+
 module.exports = {
   borrowBook,
   returnBook,
+  fetchBorrowedBooks,
 };

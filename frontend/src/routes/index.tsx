@@ -9,6 +9,7 @@ import PrivateRoute from "./private-route";
 import PublicRoute from "./public-route";
 import LoginPage from "../pages/login";
 import AddBookPage from "../pages/add-book";
+import BorrowedBooks from "../pages/borrowed-books";
 
 const LayoutWrapper = () => (
   <Layout>
@@ -29,6 +30,11 @@ const routes = createBrowserRouter([
         path: "library",
         element: <PrivateRoute element={<LibraryPage />} />,
       },
+      {
+        path: "borrowed-books",
+        element: <PrivateRoute element={<BorrowedBooks />} />,
+      },
+
       {
         path: "book/:id",
         element: <PrivateRoute element={<BookDetails />} />,

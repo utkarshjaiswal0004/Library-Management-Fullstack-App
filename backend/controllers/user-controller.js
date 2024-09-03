@@ -30,7 +30,23 @@ const returnBook = async (req, res) => {
   }
 };
 
+const getBorrowedBooks = async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: "User ID is required" });
+  }
+
+  try {
+    const books = await userService.fetchBorrowedBooks(userId);
+    return res.status(200).json(books);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   borrowBook,
   returnBook,
+  getBorrowedBooks,
 };

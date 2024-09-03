@@ -10,7 +10,7 @@ export const getNavLinks = (
   const loggedInLinks: NavLink[] = [
     ...defaultLinks,
     { text: "Library", url: "/library" },
-    { text: "My Borrowed Books", url: "/my-borrowed-books" },
+    { text: "Borrowed Books", url: "/borrowed-books" },
   ];
 
   const adminLinks: NavLink[] = [{ text: "Add Book", url: "/add-book" }];

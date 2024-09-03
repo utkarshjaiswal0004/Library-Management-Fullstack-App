@@ -14,7 +14,6 @@ export const fetchBooks = async (accessToken?: string): Promise<Book[]> => {
     if (!response.data) {
       throw new Error(response.data.message || "Failed to add book");
     }
-    console.log(response.data);
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -61,15 +60,43 @@ export const addBook = async (
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
-    if (!response.data.success) {
+    if (!response.data) {
       throw new Error(response.data.message || "Failed to add book");
     }
+    return;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(error.response.data.message || "Failed to add book");
     } else {
       throw new Error("Failed to add book due to an unknown error");
+    }
+  }
+};
+
+export const deleteBookById = async (
+  bookId: string,
+  accessToken?: string,
+): Promise<boolean> => {
+  try {
+    const response = await axios.delete(
+      `${API_URL}books/delete-book/${bookId}`,
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
+    );
+
+    if (response.status !== 200) {
+      throw new Error(response.data.message || "Failed to delete book");
+    }
+    return true;
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      throw new Error(error.response.data.message || "Failed to delete book");
+    } else {
+      throw new Error("Failed to delete book due to an unknown error");
     }
   }
 };
