@@ -3,18 +3,18 @@ import React, {
   useState,
   useContext,
   ReactNode,
-  useEffect,
   useCallback,
   useMemo,
+  useEffect,
 } from "react";
 import { UserInfo } from "../interfaces/user";
+// import { Book } from "../interfaces/book";
 import {
   fetchUserFromToken,
   refreshToken,
   userLogout,
 } from "../services/auth/auth-service";
 import axios from "axios";
-import { Book } from "../interfaces/book";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -22,8 +22,7 @@ interface AuthContextType {
   login: (user: UserInfo, accessToken: string) => void;
   logout: () => void;
   accessToken: string | null;
-  libraryBooks: Book[];
-  setLibraryBooks: (books: Book[]) => void;
+  updateUserBorrowedBooks: (bookId: string, isBookReturn: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,7 +40,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     accessToken: null,
   });
 
-  const [libraryBooks, setLibraryBooks] = useState<Book[]>([]);
   const [logoutInProgress, setLogoutInProgress] = useState<boolean>(false);
 
   const login = useCallback((userData: UserInfo, accessToken: string) => {
@@ -70,6 +68,40 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       setLogoutInProgress(false);
     }
   }, [logoutInProgress]);
+
+  const updateUserBorrowedBooks = useCallback(
+    (bookId: string, isBookReturn: boolean) => {
+      setAuthState((prevState) => {
+        if (!prevState.user) {
+          return prevState;
+        }
+
+        const updatedUser = { ...prevState.user } as UserInfo;
+
+        if (!updatedUser.borrowedBooks) {
+          updatedUser.borrowedBooks = [];
+        }
+
+        if (isBookReturn) {
+          // Return book logic
+          updatedUser.borrowedBooks = updatedUser.borrowedBooks.filter(
+            (id) => id !== bookId,
+          );
+        } else {
+          // Borrow book logic
+          if (updatedUser.borrowedBooks.length < 2) {
+            updatedUser.borrowedBooks.push(bookId);
+          }
+        }
+
+        return {
+          ...prevState,
+          user: updatedUser,
+        };
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -129,10 +161,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       login,
       logout,
       accessToken: authState.accessToken,
-      libraryBooks,
-      setLibraryBooks,
+      updateUserBorrowedBooks,
     }),
-    [authState, login, logout, libraryBooks],
+    [authState, login, logout, updateUserBorrowedBooks],
   );
 
   return (

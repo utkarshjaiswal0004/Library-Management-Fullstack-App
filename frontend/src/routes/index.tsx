@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 
 import LibraryPage from "../pages/library";
 import BookDetails from "../pages/book-details";
@@ -10,76 +10,46 @@ import PublicRoute from "./public-route";
 import LoginPage from "../pages/login";
 import AddBookPage from "../pages/add-book";
 
+const LayoutWrapper = () => (
+  <Layout>
+    <Outlet />
+  </Layout>
+);
+
 const routes = createBrowserRouter([
   {
-    path: "/library",
-    element: (
-      <PrivateRoute
-        element={
-          <Layout>
-            <LibraryPage />
-          </Layout>
-        }
-      />
-    ),
-  },
-  {
-    path: "/book/:id",
-    element: (
-      <PrivateRoute
-        element={
-          <Layout>
-            <BookDetails />
-          </Layout>
-        }
-      />
-    ),
-  },
-  {
-    path: "/add-book",
-    element: (
-      <PrivateRoute
-        element={
-          <Layout>
-            <AddBookPage />
-          </Layout>
-        }
-      />
-    ),
-  },
-  {
-    path: "/register",
-    element: (
-      <PublicRoute
-        redirectTo="/"
-        element={
-          <Layout>
-            <RegistrationPage />
-          </Layout>
-        }
-      />
-    ),
-  },
-  {
-    path: "/login",
-    element: (
-      <PublicRoute
-        redirectTo="/"
-        element={
-          <Layout>
-            <LoginPage />
-          </Layout>
-        }
-      />
-    ),
-  },
-  {
-    path: "*",
-    element: (
-      <Layout>
-        <NotFound />
-      </Layout>
-    ),
+    path: "/",
+    element: <LayoutWrapper />,
+    children: [
+      {
+        path: "",
+        element: <PrivateRoute element={<LibraryPage />} />,
+      },
+      {
+        path: "library",
+        element: <PrivateRoute element={<LibraryPage />} />,
+      },
+      {
+        path: "book/:id",
+        element: <PrivateRoute element={<BookDetails />} />,
+      },
+      {
+        path: "add-book",
+        element: <PrivateRoute element={<AddBookPage />} />,
+      },
+      {
+        path: "register",
+        element: <PublicRoute redirectTo="/" element={<RegistrationPage />} />,
+      },
+      {
+        path: "login",
+        element: <PublicRoute redirectTo="/" element={<LoginPage />} />,
+      },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
+    ],
   },
 ]);
 

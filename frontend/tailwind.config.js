@@ -7,6 +7,7 @@ module.exports = {
         primary: "#3B97DE", // Dark Blue
         secondary: "#F29620", // Yellow-Orange
         accent: "#ef4444", // Red
+        success: "#17B24D", // Red
         backgroundLight: "#f3f4f6", // Light Gray
         backgroundDark: "#111827", // Gray
         textLight: "#f9fafb", // Near White
