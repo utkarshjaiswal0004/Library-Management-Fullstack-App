@@ -74,7 +74,7 @@ const Navbar: React.FC = () => {
                   className="px-4 py-2 text-white bg-red-600 rounded focus:outline-none"
                   onClick={handleLogout}
                 >
-                  Logout {user?.name ?? "no role"}
+                  Logout
                 </button>
               ) : (
                 <AuthButtons
