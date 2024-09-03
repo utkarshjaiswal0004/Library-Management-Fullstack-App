@@ -2,6 +2,7 @@ import { Suspense, lazy } from "react";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import PrivateRoute from "./private-route";
 import PublicRoute from "./public-route";
+import Loading from "../component/loading";
 
 const LibraryPage = lazy(() => import("../pages/library"));
 const BookDetails = lazy(() => import("../pages/book-details"));
@@ -14,7 +15,7 @@ const BorrowedBooks = lazy(() => import("../pages/borrowed-books"));
 const HomePage = lazy(() => import("../pages/home-page"));
 
 const LayoutWrapper = () => (
-  <Suspense fallback={<div>Loading layout...</div>}>
+  <Suspense fallback={<Loading />}>
     <Layout>
       <Outlet />
     </Layout>
@@ -29,7 +30,7 @@ const routes = createBrowserRouter([
       {
         path: "",
         element: (
-          <Suspense fallback={<div>Loading home page...</div>}>
+          <Suspense fallback={<Loading />}>
             <HomePage />
           </Suspense>
         ),
@@ -37,7 +38,7 @@ const routes = createBrowserRouter([
       {
         path: "library",
         element: (
-          <Suspense fallback={<div>Loading library...</div>}>
+          <Suspense fallback={<Loading />}>
             <PrivateRoute element={<LibraryPage />} />
           </Suspense>
         ),
@@ -45,7 +46,7 @@ const routes = createBrowserRouter([
       {
         path: "borrowed-books",
         element: (
-          <Suspense fallback={<div>Loading borrowed books...</div>}>
+          <Suspense fallback={<Loading />}>
             <PrivateRoute element={<BorrowedBooks />} />
           </Suspense>
         ),
@@ -53,7 +54,7 @@ const routes = createBrowserRouter([
       {
         path: "book/:id",
         element: (
-          <Suspense fallback={<div>Loading book details...</div>}>
+          <Suspense fallback={<Loading />}>
             <PrivateRoute element={<BookDetails />} />
           </Suspense>
         ),
@@ -61,7 +62,7 @@ const routes = createBrowserRouter([
       {
         path: "add-book",
         element: (
-          <Suspense fallback={<div>Loading add book page...</div>}>
+          <Suspense fallback={<Loading />}>
             <PrivateRoute element={<AddBookPage />} />
           </Suspense>
         ),
@@ -69,7 +70,7 @@ const routes = createBrowserRouter([
       {
         path: "register",
         element: (
-          <Suspense fallback={<div>Loading registration page...</div>}>
+          <Suspense fallback={<Loading />}>
             <PublicRoute redirectTo="/" element={<RegistrationPage />} />
           </Suspense>
         ),
@@ -77,7 +78,7 @@ const routes = createBrowserRouter([
       {
         path: "login",
         element: (
-          <Suspense fallback={<div>Loading login page...</div>}>
+          <Suspense fallback={<Loading />}>
             <PublicRoute redirectTo="/" element={<LoginPage />} />
           </Suspense>
         ),
@@ -85,7 +86,7 @@ const routes = createBrowserRouter([
       {
         path: "*",
         element: (
-          <Suspense fallback={<div>Loading not found page...</div>}>
+          <Suspense fallback={<Loading />}>
             <NotFound />
           </Suspense>
         ),
