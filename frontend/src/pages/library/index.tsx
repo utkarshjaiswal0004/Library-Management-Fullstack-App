@@ -4,24 +4,25 @@ import { Book } from "../../interfaces/book";
 import { fetchBooks } from "../../services/book/book-service";
 import BookCard from "../../component/book-card";
 import ShimmerCard from "../../component/shimmer-card";
+import { useAuth } from "../../context/auth-context";
 
 const Library: React.FC = () => {
-  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const { accessToken, libraryBooks, setLibraryBooks } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadBooks = async () => {
-      const books = await fetchBooks();
-      setBooks(books);
+      const books = await fetchBooks(accessToken ?? "");
+      setLibraryBooks(books);
       setLoading(false);
     };
 
     loadBooks();
-  }, []);
+  }, [accessToken, setLibraryBooks]);
 
   const handleBookClick = (book: Book) => {
-    navigate(`/book/${book.id}`);
+    navigate(`/book/${book._id}`);
   };
 
   return (
@@ -33,12 +34,12 @@ const Library: React.FC = () => {
             <ShimmerCard key={index} />
           ))}
         </div>
-      ) : books.length === 0 ? (
+      ) : libraryBooks.length === 0 ? (
         <p className="text-center text-textDark">No books available</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {books.map((book) => (
-            <BookCard key={book.id} book={book} onClick={handleBookClick} />
+          {libraryBooks.map((book) => (
+            <BookCard key={book._id} book={book} onClick={handleBookClick} />
           ))}
         </div>
       )}

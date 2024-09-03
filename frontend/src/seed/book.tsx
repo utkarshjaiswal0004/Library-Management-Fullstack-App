@@ -2,7 +2,7 @@ import { Book } from "../interfaces/book";
 
 export const seedBooks: Book[] = [
   {
-    id: "1",
+    _id: "1",
     title: "The Great Gatsby",
     author: "F. Scott Fitzgerald",
     copies: 5,
@@ -11,7 +11,7 @@ export const seedBooks: Book[] = [
     imageUrl: "https://edit.org/images/cat/book-covers-big-2019101610.jpg",
   },
   {
-    id: "2",
+    _id: "2",
     title: "1984",
     author: "George Orwell",
     copies: 0,
@@ -20,7 +20,7 @@ export const seedBooks: Book[] = [
     imageUrl: "https://edit.org/images/cat/book-covers-big-2019101610.jpg",
   },
   {
-    id: "3",
+    _id: "3",
     title: "To Kill a Mockingbird",
     author: "Harper Lee",
     copies: 2,
@@ -29,7 +29,7 @@ export const seedBooks: Book[] = [
     imageUrl: "https://edit.org/images/cat/book-covers-big-2019101610.jpg",
   },
   {
-    id: "4",
+    _id: "4",
     title: "The Catcher in the Rye",
     author: "J.D. Salinger",
     copies: 1,
@@ -38,7 +38,7 @@ export const seedBooks: Book[] = [
     imageUrl: "https://edit.org/images/cat/book-covers-big-2019101610.jpg",
   },
   {
-    id: "5",
+    _id: "5",
     title: "Moby Dick",
     author: "Herman Melville",
     copies: 4,

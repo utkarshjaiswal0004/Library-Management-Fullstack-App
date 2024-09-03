@@ -15,8 +15,8 @@ export const getNavLinks = (
   ];
 
   const adminLinks: NavLink[] = [
-    { text: "Inventory", url: "/admin/inventory" },
-    { text: "Add Book", url: "/admin/add-book" },
+    { text: "Inventory", url: "/inventory" },
+    { text: "Add Book", url: "/add-book" },
   ];
 
   if (userInfo && userInfo.role == "admin") {

@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../button";
+import { useAuth } from "../../context/auth-context";
 
 interface BookInfoProps {
+  bookId: string;
   author: string;
   title: string;
   description: string;
@@ -10,12 +12,31 @@ interface BookInfoProps {
 }
 
 const BookInfo: React.FC<BookInfoProps> = ({
+  bookId,
   author,
   title,
   description,
   copies,
   isAvailable,
 }) => {
+  const { user } = useAuth();
+  const [isBorrowed, setIsBorrowed] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (user?.borrowedBooks) {
+      setIsBorrowed(user.borrowedBooks.includes(bookId));
+    } else {
+      setIsBorrowed(false);
+    }
+  }, [user, bookId]);
+
+  const handleReturnBook = () => {
+    setIsLoading(true);
+    console.log("Return Book functionality needs to be implemented");
+    setIsLoading(false);
+  };
+
   return (
     <div className="flex flex-col justify-center p-8">
       <div className="text-sm font-bold tracking-wide uppercase text-secondary">
@@ -43,11 +64,21 @@ const BookInfo: React.FC<BookInfoProps> = ({
           {isAvailable ? "Available" : "Out of Stock"}
         </span>
       </div>
-      {isAvailable && (
+      {isBorrowed ? (
         <div className="mt-6">
-          <Button>Reserve Book</Button>
+          <Button
+            disabled={isLoading}
+            className="hover:bg-primary bg-secondary"
+            onClick={handleReturnBook}
+          >
+            Return Book
+          </Button>
         </div>
-      )}
+      ) : isAvailable ? (
+        <div className="mt-6">
+          <Button disabled={isLoading}>Reserve Book</Button>
+        </div>
+      ) : null}
     </div>
   );
 };
