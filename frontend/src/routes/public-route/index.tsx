@@ -3,14 +3,18 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/auth-context";
 
 interface PublicRouteProps {
-  element: React.ReactElement;
+  element: React.ReactNode;
   redirectTo: string;
 }
 
 const PublicRoute: React.FC<PublicRouteProps> = ({ element, redirectTo }) => {
   const { isAuthenticated } = useAuth();
 
-  return isAuthenticated ? <Navigate to={redirectTo} replace /> : element;
+  if (isAuthenticated) {
+    return <Navigate to={redirectTo} replace />;
+  }
+
+  return <>{element}</>;
 };
 
 export default PublicRoute;

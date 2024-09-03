@@ -8,14 +8,14 @@ interface BookCardProps {
 const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
   return (
     <div
-      className="bg-white shadow-lg rounded-lg overflow-hidden cursor-pointer"
+      className="overflow-hidden bg-white rounded-lg shadow-lg cursor-pointer"
       onClick={() => onClick(book)}
     >
       <div className="relative">
         <img
           src={book.imageUrl || "/placeholder-image.jpg"}
           alt={book.title}
-          className="w-full h-48 object-cover"
+          className="object-cover w-full h-48"
           loading="lazy"
         />
         {!book.imageUrl && (
@@ -26,7 +26,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
       </div>
       <div className="p-4">
         <h2 className="text-xl font-semibold text-primary">{book.title}</h2>
-        <p className="text-md text-textDark mt-1">Author: {book.author}</p>
+        <p className="mt-1 text-md text-textDark">Author: {book.author}</p>
       </div>
     </div>
   );

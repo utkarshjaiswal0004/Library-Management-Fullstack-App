@@ -2,8 +2,8 @@ import React, { useState, useCallback } from "react";
 import { login as loginService } from "../../services/auth/auth-service";
 import Button from "../../component/button";
 import Input from "../../component/input";
-import { useAuth } from "../../context/auth-context";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth-context";
 
 interface FormState {
   email: string;

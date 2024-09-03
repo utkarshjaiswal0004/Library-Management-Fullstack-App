@@ -56,13 +56,17 @@ export const fetchUserFromToken = async (
   accessToken: string,
 ): Promise<UserInfo> => {
   try {
-    const response = await axios.post(`${API_URL}auth/fetchUserFromToken`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+    const response = await axios.post(
+      `${API_URL}auth/fetchUserFromToken`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    });
+    );
 
-    return response.data;
+    return response.data["user"];
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       throw new Error(
@@ -76,11 +80,15 @@ export const fetchUserFromToken = async (
   }
 };
 
-export const refreshToken = async (accessToken: string) => {
+export const refreshToken = async () => {
   try {
-    const response = await axios.post(`${API_URL}auth/refresh-token`, {
-      accessToken,
-    });
+    const response = await axios.post(
+      `${API_URL}auth/refresh-token`,
+      {},
+      {
+        withCredentials: true,
+      },
+    );
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
