@@ -8,8 +8,9 @@ import { useAuth } from "../../context/auth-context";
 
 const Library: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const { accessToken, libraryBooks, setLibraryBooks } = useAuth();
+  const { accessToken } = useAuth();
   const navigate = useNavigate();
+  const [libraryBooks, setLibraryBooks] = useState<Book[]>();
 
   useEffect(() => {
     const loadBooks = async () => {
@@ -34,11 +35,11 @@ const Library: React.FC = () => {
             <ShimmerCard key={index} />
           ))}
         </div>
-      ) : libraryBooks.length === 0 ? (
+      ) : libraryBooks?.length === 0 ? (
         <p className="text-center text-textDark">No books available</p>
       ) : (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {libraryBooks.map((book) => (
+          {libraryBooks?.map((book) => (
             <BookCard key={book._id} book={book} onClick={handleBookClick} />
           ))}
         </div>

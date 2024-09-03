@@ -1,5 +1,4 @@
 import { Book } from "../../../interfaces/book";
-import { seedBooks } from "../../../seed/book";
 import axios from "axios";
 import API_URL from "../../../config/config";
 

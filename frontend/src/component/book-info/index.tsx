@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Button from "../button";
 import { useAuth } from "../../context/auth-context";
+import { borrowBook, returnBook } from "../../services/user/user-service";
 
 interface BookInfoProps {
   bookId: string;
@@ -19,21 +20,38 @@ const BookInfo: React.FC<BookInfoProps> = ({
   copies,
   isAvailable,
 }) => {
-  const { user } = useAuth();
+  const { user, accessToken, updateUserBorrowedBooks } = useAuth();
   const [isBorrowed, setIsBorrowed] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [currentCopies, setCurrentCopies] = useState<number>(copies);
 
   useEffect(() => {
     if (user?.borrowedBooks) {
       setIsBorrowed(user.borrowedBooks.includes(bookId));
-    } else {
-      setIsBorrowed(false);
     }
   }, [user, bookId]);
 
-  const handleReturnBook = () => {
+  useEffect(() => {
+    setCurrentCopies(copies);
+  }, [copies]);
+
+  const handleReturnBook = async () => {
     setIsLoading(true);
-    console.log("Return Book functionality needs to be implemented");
+    const status = await returnBook(user?._id ?? "", bookId, accessToken ?? "");
+    if (status) {
+      setCurrentCopies((prevCopies) => prevCopies + 1);
+      updateUserBorrowedBooks(bookId, true);
+    }
+    setIsLoading(false);
+  };
+
+  const handleBorrowBook = async () => {
+    setIsLoading(true);
+    const status = await borrowBook(user?._id ?? "", bookId, accessToken ?? "");
+    if (status) {
+      setCurrentCopies((prevCopies) => prevCopies - 1);
+      updateUserBorrowedBooks(bookId, false);
+    }
     setIsLoading(false);
   };
 
@@ -48,18 +66,16 @@ const BookInfo: React.FC<BookInfoProps> = ({
       <p className="mt-4 text-lg text-textDark">{description}</p>
       <div className="flex flex-row items-center mt-6 space-x-4">
         <div
-          className={`text-sm font-semibold ${
-            isAvailable ? "text-textDark" : "text-accent"
-          }`}
+          className={`text-sm font-semibold ${isAvailable ? "text-textDark" : "text-accent"
+            }`}
         >
-          Total Copies: {copies}
+          Total Copies: {currentCopies}
         </div>
         <span
-          className={`inline-block px-3 py-1 text-xs font-semibold tracking-wide uppercase rounded-full ${
-            isAvailable
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
+          className={`inline-block px-3 py-1 text-xs font-semibold tracking-wide uppercase rounded-full ${isAvailable
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+            }`}
         >
           {isAvailable ? "Available" : "Out of Stock"}
         </span>
@@ -76,7 +92,13 @@ const BookInfo: React.FC<BookInfoProps> = ({
         </div>
       ) : isAvailable ? (
         <div className="mt-6">
-          <Button disabled={isLoading}>Reserve Book</Button>
+          <Button
+            disabled={isLoading}
+            className="hover:bg-primary bg-success"
+            onClick={handleBorrowBook}
+          >
+            Borrow Book
+          </Button>
         </div>
       ) : null}
     </div>

@@ -18,7 +18,6 @@ const getBooks = async (req, res) => {
   }
 };
 
-// New function to get a book by ID
 const getBookById = async (req, res) => {
   try {
     const book = await bookService.getBookById(req.params.id);
