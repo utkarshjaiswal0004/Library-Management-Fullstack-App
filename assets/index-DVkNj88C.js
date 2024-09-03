@@ -1,0 +1,1 @@
+import{j as e}from"./index-P_lYNfJ2.js";const u=({onClick:o,children:r,className:n="",disabled:t=!1,type:s="button"})=>e.jsx("button",{onClick:o,className:`px-4 py-2 font-semibold text-textLight transition duration-200 ease-in-out rounded-md shadow ${t?"bg-gray-400 cursor-not-allowed":"bg-primary hover:bg-secondary"} ${n}`,disabled:t,type:s,children:r});export{u as B};

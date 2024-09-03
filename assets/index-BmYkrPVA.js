@@ -1,0 +1,1 @@
+import{j as t}from"./index-P_lYNfJ2.js";const s=()=>t.jsxs("div",{className:"text-center mt-40",children:[t.jsx("h1",{className:"text-4xl",children:"404"}),t.jsx("p",{className:"text-xl",children:"Page Not Found"})]});export{s as default};
