@@ -4,17 +4,20 @@ import { Book } from "../../interfaces/book";
 import { fetchBookById } from "../../services/book/book-service";
 import BookImage from "../../component/book-image";
 import BookInfo from "../../component/book-info";
+import { useAuth } from "../../context/auth-context";
 
 const BookDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [book, setBook] = useState<Book | undefined>();
   const [loading, setLoading] = useState(true);
+  const { accessToken } = useAuth();
 
   useEffect(() => {
     const loadBook = async () => {
       if (id) {
         try {
-          const bookData = await fetchBookById(id);
+          const bookData = await fetchBookById(id, accessToken ?? "");
+          console.log(bookData);
           setBook(bookData);
         } catch (error) {
           console.error("Failed to fetch book:", error);
@@ -25,7 +28,7 @@ const BookDetails: React.FC = () => {
     };
 
     loadBook();
-  }, [id]);
+  }, [id, accessToken]);
 
   if (loading) {
     return (
@@ -50,6 +53,7 @@ const BookDetails: React.FC = () => {
       <div className="w-full max-w-5xl overflow-hidden bg-white rounded-lg shadow-lg md:flex">
         <BookImage imageUrl={book.imageUrl} title={book.title} />
         <BookInfo
+          bookId={book._id ?? ""}
           author={book.author}
           title={book.title}
           description={book.description}

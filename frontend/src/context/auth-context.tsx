@@ -14,6 +14,7 @@ import {
   userLogout,
 } from "../services/auth/auth-service";
 import axios from "axios";
+import { Book } from "../interfaces/book";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -21,6 +22,8 @@ interface AuthContextType {
   login: (user: UserInfo, accessToken: string) => void;
   logout: () => void;
   accessToken: string | null;
+  libraryBooks: Book[];
+  setLibraryBooks: (books: Book[]) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -37,6 +40,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     user: null,
     accessToken: null,
   });
+
+  const [libraryBooks, setLibraryBooks] = useState<Book[]>([]);
   const [logoutInProgress, setLogoutInProgress] = useState<boolean>(false);
 
   const login = useCallback((userData: UserInfo, accessToken: string) => {
@@ -81,6 +86,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
             login(userInfo, newAccessToken);
           } catch (refreshError) {
             await logout();
+            return Promise.reject(refreshError);
           }
         }
       }
@@ -100,7 +106,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
               ...prevState,
               accessToken: data.accessToken,
             }));
-            error.config.headers["Authorization"] = `Bearer ${data.accessToken}`;
+            error.config.headers["Authorization"] =
+              `Bearer ${data.accessToken}`;
             return axios(error.config);
           } catch (refreshError) {
             await logout();
@@ -108,7 +115,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           }
         }
         return Promise.reject(error);
-      }
+      },
     );
     return () => {
       axios.interceptors.response.eject(axiosInterceptor);
@@ -122,8 +129,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       login,
       logout,
       accessToken: authState.accessToken,
+      libraryBooks,
+      setLibraryBooks,
     }),
-    [authState, login, logout]
+    [authState, login, logout, libraryBooks],
   );
 
   return (

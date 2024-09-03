@@ -4,12 +4,13 @@ interface InputProps {
   id: string;
   name: string;
   type: string;
-  value: string;
+  value: string | number;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder?: string;
   required?: boolean;
   showPasswordToggle?: () => void;
   showPassword?: boolean;
+  min?: number;
   ariaLabel?: string;
 }
 
@@ -23,6 +24,7 @@ const Input: React.FC<InputProps> = ({
   required = false,
   showPasswordToggle,
   showPassword,
+  min,
   ariaLabel,
 }) => {
   return (
@@ -40,6 +42,7 @@ const Input: React.FC<InputProps> = ({
         type={type}
         value={value}
         onChange={onChange}
+        min={min}
         placeholder={placeholder}
         required={required}
       />

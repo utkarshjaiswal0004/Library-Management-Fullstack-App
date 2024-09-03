@@ -1,13 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const bookController = require("../controllers/book-controller");
+const {
+  createBook,
+  getBooks,
+  getBookById,
+} = require("../controllers/book-controller");
 const authenticateJWT = require("../middlewares/auth-middleware");
 const authorizeAdmin = require("../middlewares/authorize-admin");
 
 // Route to create a book (admin only)
-router.post("/", authenticateJWT, authorizeAdmin, bookController.createBook);
+router.post("/add-book", authenticateJWT, authorizeAdmin, createBook);
 
-// Route to get all books
-router.get("/", bookController.getBooks);
+router.get("/get-books", authenticateJWT, getBooks);
+
+router.get("/get-book/:id", authenticateJWT, getBookById);
 
 module.exports = router;

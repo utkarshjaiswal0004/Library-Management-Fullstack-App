@@ -8,6 +8,7 @@ import NotFound from "../component/not-found";
 import PrivateRoute from "./private-route";
 import PublicRoute from "./public-route";
 import LoginPage from "../pages/login";
+import AddBookPage from "../pages/add-book";
 
 const routes = createBrowserRouter([
   {
@@ -29,6 +30,18 @@ const routes = createBrowserRouter([
         element={
           <Layout>
             <BookDetails />
+          </Layout>
+        }
+      />
+    ),
+  },
+  {
+    path: "/add-book",
+    element: (
+      <PrivateRoute
+        element={
+          <Layout>
+            <AddBookPage />
           </Layout>
         }
       />
