@@ -1,21 +1,24 @@
+import { Suspense, lazy } from "react";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-
-import LibraryPage from "../pages/library";
-import BookDetails from "../pages/book-details";
-import RegistrationPage from "../pages/registration";
-import Layout from "../component/layout";
-import NotFound from "../component/not-found";
 import PrivateRoute from "./private-route";
 import PublicRoute from "./public-route";
-import LoginPage from "../pages/login";
-import AddBookPage from "../pages/add-book";
-import BorrowedBooks from "../pages/borrowed-books";
-import HomePage from "../pages/home-page";
+
+const LibraryPage = lazy(() => import("../pages/library"));
+const BookDetails = lazy(() => import("../pages/book-details"));
+const RegistrationPage = lazy(() => import("../pages/registration"));
+const Layout = lazy(() => import("../pages/layout"));
+const NotFound = lazy(() => import("../component/not-found"));
+const LoginPage = lazy(() => import("../pages/login"));
+const AddBookPage = lazy(() => import("../pages/add-book"));
+const BorrowedBooks = lazy(() => import("../pages/borrowed-books"));
+const HomePage = lazy(() => import("../pages/home-page"));
 
 const LayoutWrapper = () => (
-  <Layout>
-    <Outlet />
-  </Layout>
+  <Suspense fallback={<div>Loading layout...</div>}>
+    <Layout>
+      <Outlet />
+    </Layout>
+  </Suspense>
 );
 
 const routes = createBrowserRouter([
@@ -25,36 +28,67 @@ const routes = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <HomePage />,
+        element: (
+          <Suspense fallback={<div>Loading home page...</div>}>
+            <HomePage />
+          </Suspense>
+        ),
       },
       {
         path: "library",
-        element: <PrivateRoute element={<LibraryPage />} />,
+        element: (
+          <Suspense fallback={<div>Loading library...</div>}>
+            <PrivateRoute element={<LibraryPage />} />
+          </Suspense>
+        ),
       },
       {
         path: "borrowed-books",
-        element: <PrivateRoute element={<BorrowedBooks />} />,
+        element: (
+          <Suspense fallback={<div>Loading borrowed books...</div>}>
+            <PrivateRoute element={<BorrowedBooks />} />
+          </Suspense>
+        ),
       },
-
       {
         path: "book/:id",
-        element: <PrivateRoute element={<BookDetails />} />,
+        element: (
+          <Suspense fallback={<div>Loading book details...</div>}>
+            <PrivateRoute element={<BookDetails />} />
+          </Suspense>
+        ),
       },
       {
         path: "add-book",
-        element: <PrivateRoute element={<AddBookPage />} />,
+        element: (
+          <Suspense fallback={<div>Loading add book page...</div>}>
+            <PrivateRoute element={<AddBookPage />} />
+          </Suspense>
+        ),
       },
       {
         path: "register",
-        element: <PublicRoute redirectTo="/" element={<RegistrationPage />} />,
+        element: (
+          <Suspense fallback={<div>Loading registration page...</div>}>
+            <PublicRoute redirectTo="/" element={<RegistrationPage />} />
+          </Suspense>
+        ),
       },
       {
         path: "login",
-        element: <PublicRoute redirectTo="/" element={<LoginPage />} />,
+        element: (
+          <Suspense fallback={<div>Loading login page...</div>}>
+            <PublicRoute redirectTo="/" element={<LoginPage />} />
+          </Suspense>
+        ),
       },
       {
         path: "*",
-        element: <NotFound />,
+        element: (
+          <Suspense fallback={<div>Loading not found page...</div>}>
+            <NotFound />
+          </Suspense>
+        ),
       },
     ],
   },

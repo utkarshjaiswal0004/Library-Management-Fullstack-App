@@ -5,7 +5,6 @@ import Input from "../../component/input";
 import TextArea from "../../component/text-area";
 import { Book } from "../../interfaces/book";
 import { addBook as addBookService } from "../../services/book/book-service";
-import { useAuth } from "../../context/auth-context";
 
 interface FormState {
   title: string;
@@ -27,7 +26,6 @@ const AddBookPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { accessToken } = useAuth();
 
   const navigate = useNavigate();
 
@@ -55,7 +53,7 @@ const AddBookPage: React.FC = () => {
           ...form,
         };
 
-        await addBookService(newBook, accessToken ?? "");
+        await addBookService(newBook);
 
         setSuccess("Book added successfully! Redirecting...");
         navigate("/library");
@@ -69,7 +67,7 @@ const AddBookPage: React.FC = () => {
         setIsSubmitting(false);
       }
     },
-    [accessToken, form, navigate],
+    [form, navigate],
   );
 
   return (
@@ -78,7 +76,6 @@ const AddBookPage: React.FC = () => {
         onSubmit={handleSubmit}
         className="w-full max-w-md px-8 pt-6 pb-8 mb-4 bg-white rounded shadow-md"
       >
-
         <h1 className="mb-4 text-2xl font-bold text-center text-textDark md:text-3xl">
           Add Book
         </h1>

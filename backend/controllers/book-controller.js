@@ -14,7 +14,7 @@ const getBooks = async (req, res) => {
     const books = await bookService.getBooks();
     res.status(200).json(books);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: "Failed to fetch books: " + error.message });
   }
 };
 
@@ -26,7 +26,7 @@ const getBookById = async (req, res) => {
     }
     res.status(200).json(book);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: "Failed to fetch book: " + error.message });
   }
 };
 
@@ -40,7 +40,9 @@ const deleteBook = async (req, res) => {
       res.status(404).json({ message: "Book not found" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to delete book: " + error.message });
   }
 };
 

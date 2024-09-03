@@ -1,6 +1,7 @@
 import axios from "axios";
-import API_URL from "../../../config/config";
 import { UserInfo } from "../../../interfaces/user";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { showSuccessToast, showErrorToast } from "../../toast";
 
 interface LoginResponse {
   user: UserInfo;
@@ -12,18 +13,29 @@ export const register = async (
   name: string,
   email: string,
   password: string,
-) => {
+): Promise<void> => {
   try {
-    const response = await axios.post(`${API_URL}auth/register`, {
+    await axiosInstance.post("/auth/register", {
       name,
       email,
       password,
     });
-    return response.data;
+    showSuccessToast(
+      "Registration Successful",
+      "User registered successfully.",
+    );
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Registration failed");
+      showErrorToast(
+        "Registration Failed",
+        error.response.data.error || "Registration failed",
+      );
+      throw new Error(error.response.data.error || "Registration failed");
     } else {
+      showErrorToast(
+        "Registration Failed",
+        "Registration failed due to an unknown error",
+      );
       throw new Error("Registration failed due to an unknown error");
     }
   }
@@ -34,45 +46,49 @@ export const login = async (
   password: string,
 ): Promise<LoginResponse> => {
   try {
-    const response = await axios.post(
-      `${API_URL}auth/login`,
+    const response = await axiosInstance.post(
+      "/auth/login",
       {
         email,
         password,
       },
       { withCredentials: true },
     );
+    showSuccessToast("Login Successful", "You have logged in successfully.");
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Login failed");
+      showErrorToast(
+        "Login Failed",
+        error.response.data.error || "Login failed",
+      );
+      throw new Error(error.response.data.error || "Login failed");
     } else {
+      showErrorToast("Login Failed", "Login failed due to an unknown error");
       throw new Error("Login failed due to an unknown error");
     }
   }
 };
 
-export const fetchUserFromToken = async (
-  accessToken: string,
-): Promise<UserInfo> => {
+export const fetchUserFromToken = async (): Promise<UserInfo> => {
   try {
-    const response = await axios.post(
-      `${API_URL}auth/fetchUserFromToken`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
+    const response = await axiosInstance.post("/auth/fetchUserFromToken", {});
 
-    return response.data["user"];
+    return response.data.user;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
+      showErrorToast(
+        "Fetch User Failed",
+        error.response.data.error || "Failed to fetch user information",
+      );
       throw new Error(
-        error.response.data.message || "Failed to fetch user information",
+        error.response.data.error || "Failed to fetch user information",
       );
     } else {
+      showErrorToast(
+        "Fetch User Failed",
+        "Failed to fetch user information due to an unknown error",
+      );
       throw new Error(
         "Failed to fetch user information due to an unknown error",
       );
@@ -80,33 +96,19 @@ export const fetchUserFromToken = async (
   }
 };
 
-export const refreshToken = async () => {
+export const userLogout = async (): Promise<void> => {
   try {
-    const response = await axios.post(
-      `${API_URL}auth/refresh-token`,
-      {},
-      {
-        withCredentials: true,
-      },
-    );
-    return response.data;
+    await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+    showSuccessToast("Logout Successful", "You have been logged out.");
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Token refresh failed");
+      showErrorToast(
+        "Logout Failed",
+        error.response.data.error || "Logout failed",
+      );
+      throw new Error(error.response.data.error || "Logout failed");
     } else {
-      throw new Error("Token refresh failed due to an unknown error");
-    }
-  }
-};
-
-export const userLogout = async () => {
-  try {
-    await axios.post(`${API_URL}auth/logout`, {}, { withCredentials: true });
-    return;
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Logout failed");
-    } else {
+      showErrorToast("Logout Failed", "Logout failed due to an unknown error");
       throw new Error("Logout failed due to an unknown error");
     }
   }

@@ -1,6 +1,5 @@
 import React, {
   createContext,
-  useContext,
   useState,
   useEffect,
   ReactNode,
@@ -13,15 +12,7 @@ interface NavContextType {
   setActiveNav: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const NavContext = createContext<NavContextType | undefined>(undefined);
-
-export const useNav = () => {
-  const context = useContext(NavContext);
-  if (!context) {
-    throw new Error("useNav must be used within a NavProvider");
-  }
-  return context;
-};
+export const NavContext = createContext<NavContextType | undefined>(undefined);
 
 export const NavProvider = ({ children }: { children: ReactNode }) => {
   const location = useLocation();

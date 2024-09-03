@@ -4,23 +4,21 @@ import { Book } from "../../interfaces/book";
 import { fetchBooks } from "../../services/book/book-service";
 import BookCard from "../../component/book-card";
 import ShimmerCard from "../../component/shimmer-card";
-import { useAuth } from "../../context/auth-context";
 
 const Library: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const { accessToken } = useAuth();
   const navigate = useNavigate();
   const [libraryBooks, setLibraryBooks] = useState<Book[]>();
 
   useEffect(() => {
     const loadBooks = async () => {
-      const books = await fetchBooks(accessToken ?? "");
+      const books = await fetchBooks();
       setLibraryBooks(books);
       setLoading(false);
     };
 
     loadBooks();
-  }, [accessToken, setLibraryBooks]);
+  }, [setLibraryBooks]);
 
   const handleBookClick = (book: Book) => {
     navigate(`/book/${book._id}`);
