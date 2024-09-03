@@ -5,7 +5,7 @@ import React, {
   ReactNode,
   useEffect,
   useCallback,
-  useLayoutEffect,
+  useMemo,
 } from "react";
 import { UserInfo } from "../interfaces/user";
 import {
@@ -14,7 +14,6 @@ import {
   userLogout,
 } from "../services/auth/auth-service";
 import axios from "axios";
-import API_URL from "../config/config";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -29,23 +28,35 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [authState, setAuthState] = useState<{
+    isAuthenticated: boolean;
+    user: UserInfo | null;
+    accessToken: string | null;
+  }>({
+    isAuthenticated: false,
+    user: null,
+    accessToken: null,
+  });
   const [logoutInProgress, setLogoutInProgress] = useState<boolean>(false);
 
-  const login = useCallback((user: UserInfo, accessToken: string) => {
-    setUser(user);
-    setAccessToken(accessToken);
-    setIsAuthenticated(true);
+  const login = useCallback((userData: UserInfo, accessToken: string) => {
+    setAuthState({
+      user: userData,
+      accessToken: accessToken,
+      isAuthenticated: true,
+    });
+    localStorage.setItem("accessToken", accessToken);
   }, []);
 
   const logout = useCallback(async () => {
     if (logoutInProgress) return;
     setLogoutInProgress(true);
-    setUser(null);
-    setAccessToken(null);
-    setIsAuthenticated(false);
+    setAuthState({
+      user: null,
+      accessToken: null,
+      isAuthenticated: false,
+    });
+    localStorage.removeItem("accessToken");
     try {
       await userLogout();
     } catch (error) {
@@ -57,48 +68,39 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const initializeAuth = async () => {
-      const storedAccessToken = accessToken;
-
-      if (storedAccessToken) {
-        console.log("trying to fetch data");
+      const storedAccessToken = localStorage.getItem("accessToken");
+      if (storedAccessToken && !authState.isAuthenticated) {
         try {
           const userInfo = await fetchUserFromToken(storedAccessToken);
           login(userInfo, storedAccessToken);
         } catch (error) {
-          console.log("Failed to fetch user info", error);
-
+          console.error("Failed to fetch user info", error);
           try {
-            const { accessToken: newAccessToken } =
-              await refreshToken(storedAccessToken);
+            const { accessToken: newAccessToken } = await refreshToken();
             const userInfo = await fetchUserFromToken(newAccessToken);
             login(userInfo, newAccessToken);
           } catch (refreshError) {
             await logout();
-            return Promise.reject(refreshError);
           }
         }
       }
     };
-
     initializeAuth();
-  }, []);
+  }, [authState.isAuthenticated, login, logout]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const axiosInterceptor = axios.interceptors.response.use(
       (response) => response,
       async (error) => {
         if (error.response?.status === 401 && !error.config.__isRetryRequest) {
           if (logoutInProgress) return Promise.reject(error);
-
           try {
-            const { data } = await axios.post(
-              `${API_URL}auth/refresh-token`,
-              {},
-              { withCredentials: true },
-            );
-            setAccessToken(data.accessToken);
-            error.config.headers["Authorization"] =
-              `Bearer ${data.accessToken}`;
+            const { data } = await refreshToken();
+            setAuthState((prevState) => ({
+              ...prevState,
+              accessToken: data.accessToken,
+            }));
+            error.config.headers["Authorization"] = `Bearer ${data.accessToken}`;
             return axios(error.config);
           } catch (refreshError) {
             await logout();
@@ -106,24 +108,26 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           }
         }
         return Promise.reject(error);
-      },
+      }
     );
-
     return () => {
       axios.interceptors.response.eject(axiosInterceptor);
     };
   }, [logout, logoutInProgress]);
 
+  const authContextValue = useMemo(
+    () => ({
+      isAuthenticated: authState.isAuthenticated,
+      user: authState.user,
+      login,
+      logout,
+      accessToken: authState.accessToken,
+    }),
+    [authState, login, logout]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        user,
-        login,
-        logout,
-        accessToken,
-      }}
-    >
+    <AuthContext.Provider value={authContextValue}>
       {children}
     </AuthContext.Provider>
   );

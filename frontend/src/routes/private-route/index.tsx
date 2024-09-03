@@ -1,20 +1,18 @@
 import React from "react";
-import { Navigate, useLocation } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/auth-context";
-
 interface PrivateRouteProps {
-  element: React.ReactElement;
+  element: React.ReactNode;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
   const { isAuthenticated } = useAuth();
-  const location = useLocation();
 
-  return isAuthenticated ? (
-    element
-  ) : (
-    <Navigate to="/login" state={{ from: location }} replace />
-  );
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <>{element}</>;
 };
 
 export default PrivateRoute;

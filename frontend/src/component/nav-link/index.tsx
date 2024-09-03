@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { NavLink } from "../../../../interfaces/nav-links";
+import { NavLink } from "../../interfaces/nav-links";
 
 const NavLinkItem: React.FC<
   NavLink & {

@@ -45,12 +45,12 @@ const login = async (req, res) => {
 
 const refreshToken = async (req, res) => {
   try {
-    const { accessToken } = req.body;
-    if (!accessToken) {
-      return res.status(400).json({ error: "Refresh token is required" });
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+      return res.status(400).json({ error: "Access token is required" });
     }
 
-    const newAccessToken = await authService.refreshToken(accessToken);
+    const newAccessToken = await authService.refreshToken(refreshToken);
     res.status(200).json({ accessToken: newAccessToken });
   } catch (error) {
     res
