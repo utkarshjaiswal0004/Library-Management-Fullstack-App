@@ -15,7 +15,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onClick }) => {
         <img
           src={book.imageUrl || "/placeholder-image.jpg"}
           alt={book.title}
-          className="object-cover w-full h-48"
+          className="object-top w-full h-80"
           loading="lazy"
         />
         {!book.imageUrl && (

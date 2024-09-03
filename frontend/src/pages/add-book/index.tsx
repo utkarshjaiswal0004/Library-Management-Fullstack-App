@@ -69,7 +69,7 @@ const AddBookPage: React.FC = () => {
         setIsSubmitting(false);
       }
     },
-    [form, navigate],
+    [accessToken, form, navigate],
   );
 
   return (

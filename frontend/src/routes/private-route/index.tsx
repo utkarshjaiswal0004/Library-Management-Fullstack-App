@@ -9,7 +9,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
   const { isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <>{element}</>;
