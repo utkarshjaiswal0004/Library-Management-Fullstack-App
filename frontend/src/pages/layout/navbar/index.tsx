@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useNav } from "../../../context/nav-context";
 import { getNavLinks } from "../../../utils/nav-links";
 import { NavLink } from "../../../interfaces/nav-links";
-import { useAuth } from "../../../context/auth-context";
-import AuthButtons from "../../auth-buttons";
-import NavLinkItem from "../../nav-link";
+import AuthButtons from "../../../component/auth-buttons";
+import NavLinkItem from "../../../component/nav-link";
+import { useAuth } from "../../../context/auth-context/use-auth-context";
+import { useNav } from "../../../context/nav-context/use-nav-context";
 
 const Navbar: React.FC = () => {
   const { activeNav, setActiveNav } = useNav();
@@ -36,9 +36,7 @@ const Navbar: React.FC = () => {
 
   const navLinks: NavLink[] = getNavLinks(isAuthenticated, user ?? undefined);
 
-  const menuClasses = `flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 ${
-    isMobile && !isMenuOpen ? "hidden" : "block"
-  }`;
+  const menuClasses = `flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 ${isMobile && !isMenuOpen ? "hidden" : "block"}`;
   return (
     <nav className="fixed top-0 z-50 w-full py-4 shadow-lg bg-backgroundDark text-textLight">
       <div className="container flex flex-col items-center justify-between px-4 mx-auto lg:flex-row md:px-6">

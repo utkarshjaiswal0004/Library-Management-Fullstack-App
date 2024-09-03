@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Button from "../button";
-import { useAuth } from "../../context/auth-context";
 import { borrowBook, returnBook } from "../../services/user/user-service";
 import { deleteBookById } from "../../services/book/book-service";
 import { useNavigate } from "react-router-dom";
 import "./book-info.css";
+import { useAuth } from "../../context/auth-context/use-auth-context";
 interface BookInfoProps {
   bookId: string;
   author: string;
@@ -22,7 +22,7 @@ const BookInfo: React.FC<BookInfoProps> = ({
   copies,
   isAvailable,
 }) => {
-  const { user, accessToken, updateUserBorrowedBooks } = useAuth();
+  const { user, updateUserBorrowedBooks } = useAuth();
   const [isBorrowed, setIsBorrowed] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentCopies, setCurrentCopies] = useState<number>(copies);
@@ -40,11 +40,7 @@ const BookInfo: React.FC<BookInfoProps> = ({
   const handleReturnBook = async () => {
     setIsLoading(true);
     try {
-      const status = await returnBook(
-        user?._id ?? "",
-        bookId,
-        accessToken ?? "",
-      );
+      const status = await returnBook(user?._id ?? "", bookId);
       if (status) {
         setCurrentCopies((prevCopies) => prevCopies + 1);
         updateUserBorrowedBooks(bookId, true);
@@ -59,11 +55,7 @@ const BookInfo: React.FC<BookInfoProps> = ({
   const handleBorrowBook = async () => {
     setIsLoading(true);
     try {
-      const status = await borrowBook(
-        user?._id ?? "",
-        bookId,
-        accessToken ?? "",
-      );
+      const status = await borrowBook(user?._id ?? "", bookId);
       if (status) {
         setCurrentCopies((prevCopies) => prevCopies - 1);
         updateUserBorrowedBooks(bookId, false);
@@ -78,7 +70,7 @@ const BookInfo: React.FC<BookInfoProps> = ({
   const deleteBook = async () => {
     setIsLoading(true);
     try {
-      const status = await deleteBookById(bookId, accessToken ?? "");
+      const status = await deleteBookById(bookId);
       if (status) {
         if (user?.borrowedBooks?.includes(bookId)) {
           updateUserBorrowedBooks(bookId, false);

@@ -8,8 +8,8 @@ const register = async (req, res) => {
       return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const user = await authService.registerUser(name, email, password);
-    res.status(201).json({ message: "User registered successfully", user });
+    await authService.registerUser(name, email, password);
+    res.status(201).json({ message: "User registered successfully" });
   } catch (error) {
     res.status(500).json({
       error: "An error occurred during registration: " + error.message,
@@ -29,12 +29,11 @@ const login = async (req, res) => {
       password
     );
 
-    // Setting the refresh token in HTTP-only cookie for saver access
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     res.status(200).json({ user, accessToken });
@@ -47,7 +46,7 @@ const refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
     if (!refreshToken) {
-      return res.status(400).json({ error: "Access token is required" });
+      return res.status(400).json({ error: "Refresh token is required" });
     }
 
     const newAccessToken = await authService.refreshToken(refreshToken);
@@ -98,4 +97,5 @@ const logout = async (req, res) => {
       .json({ error: "An error occurred during logout: " + error.message });
   }
 };
+
 module.exports = { register, login, refreshToken, fetchUserFromToken, logout };

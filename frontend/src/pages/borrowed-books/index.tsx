@@ -4,32 +4,32 @@ import { Book } from "../../interfaces/book";
 import BookCard from "../../component/book-card";
 import Button from "../../component/button";
 import ShimmerCard from "../../component/shimmer-card";
-import { useAuth } from "../../context/auth-context";
 import {
   fetchBorrowedBooks,
   returnBook,
 } from "../../services/user/user-service";
+import { useAuth } from "../../context/auth-context/use-auth-context";
 
 const BorrowedBooks: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [borrowedBooks, setBorrowedBooks] = useState<Book[]>([]);
-  const { user, accessToken, updateUserBorrowedBooks } = useAuth();
+  const { user, updateUserBorrowedBooks } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const loadBorrowedBooks = async () => {
       if (user) {
-        const books = await fetchBorrowedBooks(user._id, accessToken ?? "");
+        const books = await fetchBorrowedBooks(user._id);
         setBorrowedBooks(books);
         setLoading(false);
       }
     };
 
     loadBorrowedBooks();
-  }, [user, accessToken]);
+  }, [user]);
 
   const handleReturnBook = async (bookId: string) => {
-    const status = await returnBook(user?._id ?? "", bookId, accessToken ?? "");
+    const status = await returnBook(user?._id ?? "", bookId);
     if (status) {
       updateUserBorrowedBooks(bookId, true);
       setBorrowedBooks((prevBooks) =>

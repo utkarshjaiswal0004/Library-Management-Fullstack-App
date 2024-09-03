@@ -1,6 +1,6 @@
 import React from "react";
-import { NavProvider } from "../../context/nav-context";
-import Footer from "./footer";
+import { NavProvider } from "../../context/nav-context/nav-context";
+import Footer from "../../component/footer";
 import Navbar from "./navbar";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {

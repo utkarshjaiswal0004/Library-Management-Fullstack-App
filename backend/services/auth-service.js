@@ -31,7 +31,6 @@ const loginUser = async (email, password) => {
 };
 
 const refreshToken = async (token) => {
-  console.log("trying to refresh the token :", token);
   const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
   const user = await User.findById(decoded.id);
   if (!user) {

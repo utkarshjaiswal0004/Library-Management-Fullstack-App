@@ -1,102 +1,85 @@
-import { Book } from "../../../interfaces/book";
 import axios from "axios";
-import API_URL from "../../../config/config";
+import { Book } from "../../../interfaces/book";
+import axiosInstance from "../../../utils/axios-interceptor";
+import { showSuccessToast, showErrorToast } from "../../toast";
 
-export const fetchBooks = async (accessToken?: string): Promise<Book[]> => {
+export const fetchBooks = async (): Promise<Book[]> => {
   try {
-    const response = await axios.get(`${API_URL}books/get-books`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-
+    const response = await axiosInstance.get("/books/get-books");
     if (!response.data) {
-      throw new Error(response.data.message || "Failed to add book");
+      throw new Error("Failed to fetch books");
     }
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to add book");
+      showErrorToast(
+        "Error",
+        error.response.data.message || "Failed to fetch books",
+      );
     } else {
-      throw new Error("Failed to add book due to an unknown error");
+      showErrorToast("Error", "Failed to fetch books due to an unknown error");
     }
+    throw error;
   }
 };
 
-export const fetchBookById = async (
-  _id: string,
-  accessToken?: string,
-): Promise<Book | undefined> => {
+export const fetchBookById = async (_id: string): Promise<Book | undefined> => {
   try {
-    const response = await axios.get(`${API_URL}books/get-book/${_id}`, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axiosInstance.get(`/books/get-book/${_id}`);
     if (!response.data) {
       throw new Error("Book not found");
     }
-
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to fetch book");
+      showErrorToast(
+        "Error",
+        error.response.data.message || "Failed to fetch book",
+      );
     } else {
-      throw new Error("Failed to fetch book due to an unknown error");
+      showErrorToast("Error", "Failed to fetch book due to an unknown error");
     }
+    throw error;
   }
 };
 
-export const addBook = async (
-  book: Book,
-  accessToken?: string,
-): Promise<void> => {
+export const addBook = async (book: Book): Promise<void> => {
   try {
-    const response = await axios.post(`${API_URL}books/add-book`, book, {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axiosInstance.post("/books/add-book", book);
     if (!response.data) {
-      throw new Error(response.data.message || "Failed to add book");
+      throw new Error("Failed to add book");
     }
-    return;
+    showSuccessToast("Success", "Book added successfully");
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to add book");
+      showErrorToast(
+        "Error",
+        error.response.data.message || "Failed to add book",
+      );
     } else {
-      throw new Error("Failed to add book due to an unknown error");
+      showErrorToast("Error", "Failed to add book due to an unknown error");
     }
+    throw error;
   }
 };
 
-export const deleteBookById = async (
-  bookId: string,
-  accessToken?: string,
-): Promise<boolean> => {
+export const deleteBookById = async (bookId: string): Promise<boolean> => {
   try {
-    const response = await axios.delete(
-      `${API_URL}books/delete-book/${bookId}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-
+    const response = await axiosInstance.delete(`/books/delete-book/${bookId}`);
     if (response.status !== 200) {
-      throw new Error(response.data.message || "Failed to delete book");
+      throw new Error("Failed to delete book");
     }
+    showSuccessToast("Success", "Book deleted successfully");
     return true;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to delete book");
+      showErrorToast(
+        "Error",
+        error.response.data.message || "Failed to delete book",
+      );
     } else {
-      throw new Error("Failed to delete book due to an unknown error");
+      showErrorToast("Error", "Failed to delete book due to an unknown error");
     }
+    throw error;
   }
 };

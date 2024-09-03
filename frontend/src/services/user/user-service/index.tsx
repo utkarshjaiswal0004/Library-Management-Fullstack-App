@@ -1,94 +1,75 @@
-import axios from "axios";
-import API_URL from "../../../config/config";
+import axiosInstance from "../../../utils/axios-interceptor";
 import { Book } from "../../../interfaces/book";
+import { showSuccessToast, showErrorToast } from "../../toast";
+import axios from "axios";
 
 export const borrowBook = async (
   userId: string,
   bookId: string,
-  accessToken?: string,
 ): Promise<boolean | undefined> => {
   try {
-    const response = await axios.post(
-      `${API_URL}users/borrow`,
-      {
-        userId,
-        bookId,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-    if (!response.data) {
-      throw new Error("Book not found");
+    const response = await axiosInstance.post("/users/borrow", {
+      userId,
+      bookId,
+    });
+    if (response.status === 200) {
+      showSuccessToast("Success", "Book borrowed successfully");
+      return true;
+    } else {
+      throw new Error("Failed to borrow book");
     }
-
-    return true;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to fetch book");
+      showErrorToast(
+        "Error",
+        error.response.data.message || "Failed to borrow book",
+      );
     } else {
-      throw new Error("Failed to fetch book due to an unknown error");
+      showErrorToast("Error", "Failed to borrow book due to an unknown error");
     }
+    throw error;
   }
 };
 
 export const returnBook = async (
   userId: string,
   bookId: string,
-  accessToken?: string,
 ): Promise<boolean | undefined> => {
   try {
-    const response = await axios.post(
-      `${API_URL}users/return`,
-      {
-        userId,
-        bookId,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
-    if (!response.data) {
-      throw new Error("Book not found");
+    const response = await axiosInstance.post("/users/return", {
+      userId,
+      bookId,
+    });
+    if (response.status === 200) {
+      showSuccessToast("Success", "Book returned successfully");
+      return true;
+    } else {
+      throw new Error("Failed to return book");
     }
-
-    return true;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.message || "Failed to fetch book");
+      showErrorToast(
+        "Error",
+        error.response.data.message || "Failed to return book",
+      );
     } else {
-      throw new Error("Failed to fetch book due to an unknown error");
+      showErrorToast("Error", "Failed to return book due to an unknown error");
     }
+    throw error;
   }
 };
 
-export const fetchBorrowedBooks = async (
-  userId: string,
-  accessToken?: string,
-): Promise<Book[]> => {
+export const fetchBorrowedBooks = async (userId: string): Promise<Book[]> => {
   try {
-    const response = await axios.post(
-      `${API_URL}users/borrowed-books`,
-      { userId },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      },
-    );
+    const response = await axiosInstance.post("/users/borrowed-books", {
+      userId,
+    });
 
-    if (response.status !== 200) {
+    if (response.status === 200) {
+      return response.data as Book[];
+    } else {
       throw new Error("Failed to fetch borrowed books");
     }
-    const bookList = response.data as Book[];
-    return bookList;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
       const status = error.response.status;
@@ -98,11 +79,13 @@ export const fetchBorrowedBooks = async (
           : status === 401
             ? "Unauthorized access"
             : "Failed to fetch borrowed books";
-      throw new Error(errorMessage);
+      showErrorToast("Error", errorMessage);
     } else {
-      throw new Error(
+      showErrorToast(
+        "Error",
         "An unknown error occurred while fetching borrowed books",
       );
     }
+    throw error;
   }
 };

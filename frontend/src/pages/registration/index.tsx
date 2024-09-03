@@ -3,6 +3,7 @@ import { register } from "../../services/auth/auth-service";
 
 import Button from "../../component/button";
 import Input from "../../component/input";
+import { useNavigate } from "react-router-dom";
 
 interface FormState {
   name: string;
@@ -23,6 +24,7 @@ const RegistrationForm: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,10 +43,10 @@ const RegistrationForm: React.FC = () => {
     }
 
     try {
-      const { token } = await register(form.name, form.email, form.password);
+      await register(form.name, form.email, form.password);
       setSuccess("Registration successful! Redirecting...");
-      localStorage.setItem("authToken", token);
-      window.location.href = "/login";
+
+      navigate("/login");
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

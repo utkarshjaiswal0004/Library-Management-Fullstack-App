@@ -3,8 +3,7 @@ import { login as loginService } from "../../services/auth/auth-service";
 import Button from "../../component/button";
 import Input from "../../component/input";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/auth-context";
-
+import { useAuth } from "../../context/auth-context/use-auth-context";
 interface FormState {
   email: string;
   password: string;
@@ -48,7 +47,7 @@ const LoginPage: React.FC = () => {
 
         setSuccess("Login successful! Redirecting...");
         contextLogin(user, accessToken);
-        navigate("/library");
+        navigate("/");
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);
@@ -66,7 +65,6 @@ const LoginPage: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center pt-20 m-5 bg-backgroundLight">
-
       <form
         onSubmit={handleSubmit}
         className="w-full max-w-md px-8 pt-6 pb-8 mb-4 bg-white rounded shadow-md"
