@@ -58,7 +58,7 @@ const AddBookPage: React.FC = () => {
         await addBookService(newBook, accessToken ?? "");
 
         setSuccess("Book added successfully! Redirecting...");
-        navigate("/books");
+        navigate("/library");
       } catch (err) {
         if (err instanceof Error) {
           setError(err.message);

@@ -17,7 +17,6 @@ const BookDetails: React.FC = () => {
       if (id) {
         try {
           const bookData = await fetchBookById(id, accessToken ?? "");
-          console.log(bookData);
           setBook(bookData);
         } catch (error) {
           console.error("Failed to fetch book:", error);
