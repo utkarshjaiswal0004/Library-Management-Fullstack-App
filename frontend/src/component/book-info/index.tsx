@@ -26,8 +26,10 @@ const BookInfo: React.FC<BookInfoProps> = ({
   const [isBorrowed, setIsBorrowed] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentCopies, setCurrentCopies] = useState<number>(copies);
+  const [isBookAvailable, setIsBookAvailable] = useState<boolean>(isAvailable);
 
   const navigate = useNavigate();
+
 
   useEffect(() => {
     setIsBorrowed(user?.borrowedBooks?.includes(bookId) ?? false);
@@ -37,12 +39,18 @@ const BookInfo: React.FC<BookInfoProps> = ({
     setCurrentCopies(copies);
   }, [copies]);
 
+
+
   const handleReturnBook = async () => {
     setIsLoading(true);
     try {
       const status = await returnBook(user?._id ?? "", bookId);
       if (status) {
-        setCurrentCopies((prevCopies) => prevCopies + 1);
+        setCurrentCopies((prevCopies) => {
+          const updatedCopies = prevCopies + 1;
+          setIsBookAvailable(updatedCopies > 0);
+          return updatedCopies;
+        });
         updateUserBorrowedBooks(bookId, true);
       }
     } catch (error) {
@@ -57,7 +65,12 @@ const BookInfo: React.FC<BookInfoProps> = ({
     try {
       const status = await borrowBook(user?._id ?? "", bookId);
       if (status) {
-        setCurrentCopies((prevCopies) => prevCopies - 1);
+        setCurrentCopies((prevCopies) => {
+          const updatedCopies = prevCopies - 1;
+          setIsBookAvailable(updatedCopies > 0);
+          return updatedCopies;
+        });
+
         updateUserBorrowedBooks(bookId, false);
       }
     } catch (error) {
@@ -85,7 +98,7 @@ const BookInfo: React.FC<BookInfoProps> = ({
   };
 
   return (
-    <div className="flex flex-col justify-center p-8">
+    <div className="flex flex-col justify-center p-8 text-center md:text-left ">
       <div className="text-sm font-bold tracking-wide uppercase text-secondary">
         {author}
       </div>
@@ -95,20 +108,19 @@ const BookInfo: React.FC<BookInfoProps> = ({
       <div className="mt-4 text-lg description-container text-textDark">
         {description}
       </div>
-      <div className="flex flex-row items-center mt-6 space-x-4">
+      <div className="flex flex-row items-center mx-auto mt-6 space-x-4 md:mx-0">
         <div
-          className={`text-sm font-semibold ${isAvailable ? "text-textDark" : "text-accent"}`}
+          className={`text-sm font-semibold  ${isBookAvailable ? "text-textDark" : "text-accent"}`}
         >
           Total Copies: {currentCopies}
         </div>
         <span
-          className={`inline-block px-3 py-1 text-xs font-semibold tracking-wide uppercase rounded-full ${
-            isAvailable
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
-          }`}
+          className={`inline-block px-3 py-1 text-xs font-semibold tracking-wide uppercase rounded-full ${isBookAvailable
+            ? "bg-green-100 text-green-800"
+            : "bg-red-100 text-red-800"
+            }`}
         >
-          {isAvailable ? "Available" : "Out of Stock"}
+          {isBookAvailable ? "Available" : "Out of Stock"}
         </span>
       </div>
       {isBorrowed ? (
@@ -136,7 +148,7 @@ const BookInfo: React.FC<BookInfoProps> = ({
         <div className="mt-6">
           <Button
             disabled={isLoading}
-            className="hover:bg-backgroundDark bg-accent"
+            className="bg-red-600 hover:bg-slate-800"
             onClick={deleteBook}
           >
             Delete Book

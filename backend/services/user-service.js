@@ -16,12 +16,7 @@ const borrowBook = async (userId, bookId) => {
   user.borrowedBooks.push(bookId);
   book.copies -= 1;
 
-  if (book.copies === 0) {
-    await book.remove();
-  } else {
-    await book.save();
-  }
-
+  await book.save();
   await user.save();
 };
 
