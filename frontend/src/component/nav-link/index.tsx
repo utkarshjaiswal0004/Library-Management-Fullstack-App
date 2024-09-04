@@ -13,7 +13,7 @@ const NavLinkItem: React.FC<
   <li>
     <Link
       to={url}
-      className={`block px-4 py-2 hover:text-secondary ${activeNav === url ? "text-secondary font-bold" : ""}`}
+      className={`block px-4 py-2 hover:text-secondary text-center md:text-left ${activeNav === url ? "text-secondary font-bold" : ""}`}
       onClick={() => {
         setActiveNav(url);
         if (isMobile) toggleMenu();

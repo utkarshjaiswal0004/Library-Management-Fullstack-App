@@ -4,14 +4,28 @@ The Library Management System is a robust application built using the MERN stack
 
 This README.md file includes detailed architectural decisions, thoughts, and assumptions made during the development process to provide better insight into the design and implementation of the system.
 
+## Screenshots
+
+Attach screenshots of the application in action:
+
+### Home Page
+
+![Home Page]
+<img src="screenshots/homepage.png" alt="Home Page" width="400"/>
+
+### Login-SignUp Page
+
+![Login SignUp Page]
+<img src="screenshots/login-signup-form.png" alt="Login SignUp Page" width="400"/>
+
+### Book Management
+
+![Library Page]
+<img src="screenshots/library.png" alt="Login SignUp Page" width="400"/>
+
 ## Architectural Approach
 
 This project has been developed with a strong emphasis on clean, maintainable, and testable code. The following principles and methodologies have been central to the design and implementation:
-
-### Test-Driven Development (TDD)
-
-- The project follows a Test-Driven Development (TDD) approach, ensuring that tests are written before the actual implementation. This helps in defining clear expectations for the functionality and leads to more reliable and bug-resistant code.
-- Unit tests have been written for each critical function and endpoint to ensure correctness and to catch regressions early.
 
 ### Clean Code
 
@@ -36,3 +50,88 @@ This project has been developed with a strong emphasis on clean, maintainable, a
 ### DRY (Don't Repeat Yourself)
 
 - DRY principles have been followed to avoid code duplication. Common functionality is abstracted into reusable components, reducing redundancy and improving maintainability.
+
+### Features
+
+- User Authentication and Registration
+- Book Management (CRD operations)
+- User Role Based Management ( user | admin )
+- Borrowing and Returning Books ( at max two book at a time )
+- Responsive UI
+- Axios interceptor for refreshing tokens
+- Lazy loading
+- Image optimization
+
+### Installation
+
+1. Clone the repository:
+
+```
+  git clone https://github.com/utkarshjaiswal0004/Library-Management-Fullstack-App.git
+```
+
+2.  Install dependencies for both the backend and frontend:
+
+```
+  cd Library-Management-Fullstack-App/backend
+  npm install
+
+  cd ../frontend
+  npm install
+```
+
+3.  Set up environment variables:
+
+- Create a .env file in the backend directory and add the following:
+
+```env
+MONGO_URI=<YOUR-MONGO-DB-CONNECTION-URL>
+JWT_ACCESS_SECRET=<YOUR-CUSTOM-JWT-SECRET>
+JWT_REFRESH_SECRET=<YOUR-CUSTOM-JWT-REFRESH-SECRET>
+NODE_ENV=development
+FRONTEND_URL=<YOUR-FRONTEND-REACT-URL or http://localhost:5173>
+PORT=3000
+```
+
+4.             Start the development servers:
+
+- Backend (from inside backend folder):
+  ```
+  npm run dev
+  ```
+
+````
+
+-  	Frontend (from inside frontend folder):
+ ```
+npm run dev
+````
+
+### Usage
+
+After installation, you can access the application locally via http://localhost:3000. Use the following credentials for testing (if any):
+
+- Admin:
+  • Email: admin@gmail.com
+  • Password: 123456
+  • User:
+  • Email: test@gmail.com
+  • Password: 123456
+
+### API End Points
+
+Below is a summary of the key API endpoints:
+
+- Authentication
+  • POST /api/auth/register - Register a new user.
+  • POST /api/auth/login - Login a user.
+- Books
+  • GET /api/books - Retrieve all books.
+  • POST /api/books - Add a new book.
+  • PUT /api/books/:id - Update book details.
+  • DELETE /api/books/:id - Delete a book.
+- Users
+  • GET /api/users - Retrieve all users.
+  • POST /api/users - Add a new user.
+  • PUT /api/users/:id - Update user details.
+  • DELETE /api/users/:id - Delete a user.
