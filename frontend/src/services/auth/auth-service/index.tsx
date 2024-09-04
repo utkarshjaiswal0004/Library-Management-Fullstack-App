@@ -2,6 +2,8 @@ import axios from "axios";
 import { UserInfo } from "../../../interfaces/user";
 import axiosInstance from "../../../utils/axios-interceptor";
 import { showSuccessToast, showErrorToast } from "../../toast";
+import API_URL from "../../../config/config";
+
 
 interface LoginResponse {
   user: UserInfo;
@@ -98,7 +100,7 @@ export const fetchUserFromToken = async (): Promise<UserInfo> => {
 
 export const userLogout = async (): Promise<void> => {
   try {
-    await axiosInstance.post("/auth/logout", {}, { withCredentials: true });
+    await axios.post(`${API_URL}auth/logout`, {}, { withCredentials: true });
     showSuccessToast("Logout Successful", "You have been logged out.");
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
