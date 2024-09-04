@@ -78,7 +78,6 @@ const fetchUserFromToken = async (req, res) => {
 const logout = async (req, res) => {
   try {
     const { refreshToken } = req.cookies;
-
     if (!refreshToken) {
       return res.status(401).json({ message: "Refresh token not provided" });
     }
