@@ -10,18 +10,43 @@ Attach screenshots of the application in action:
 
 ### Home Page
 
-![Home Page]
-<img src="screenshots/homepage.png" alt="Home Page" width="400"/>
+<img src="screenshots/homepage.png" alt="Home Page" width="700"/>
 
 ### Login-SignUp Page
 
-![Login SignUp Page]
-<img src="screenshots/login-signup-form.png" alt="Login SignUp Page" width="400"/>
+<img src="screenshots/login-signup-form.png" alt="Login SignUp Page" width="700"/>
 
-### Book Management
+### Library Page
 
-![Library Page]
-<img src="screenshots/library.png" alt="Login SignUp Page" width="400"/>
+<img src="screenshots/library.png" alt="Library Page" width="700"/>
+
+### Book-detail Page
+
+<img src="screenshots/book-detail.png" alt="Book-detail Page" width="700"/>
+
+### Borrowed Book Page
+
+<img src="screenshots/borrowed.png" alt="Borrowed Book Page" width="700"/>
+
+### Add Book Page
+
+<img src="screenshots/add-book.png" alt="Add Book Page" width="700"/>
+
+### Not Found Page
+
+<img src="screenshots/not-found.png" alt="Add Book Page" width="700"/>
+
+## Website Credentials and URL
+
+- Admin:
+  • Email: admin@gmail.com
+  • Password: 123456
+  • User:
+  • Email: test@gmail.com
+  • Password: 123456
+
+You can visit the live version of the Library Management System [here](https://library-management-fullstack-app.vercel.app/)
+[Library Management System](https://library-management-fullstack-app.vercel.app/)
 
 ## Architectural Approach
 
@@ -53,7 +78,7 @@ This project has been developed with a strong emphasis on clean, maintainable, a
 
 ### Features
 
-- User Authentication and Registration
+- User Authentication, Authorization and Registration
 - Book Management (CRD operations)
 - User Role Based Management ( user | admin )
 - Borrowing and Returning Books ( at max two book at a time )
@@ -85,27 +110,37 @@ This project has been developed with a strong emphasis on clean, maintainable, a
 - Create a .env file in the backend directory and add the following:
 
 ```env
+
 MONGO_URI=<YOUR-MONGO-DB-CONNECTION-URL>
 JWT_ACCESS_SECRET=<YOUR-CUSTOM-JWT-SECRET>
 JWT_REFRESH_SECRET=<YOUR-CUSTOM-JWT-REFRESH-SECRET>
 NODE_ENV=development
 FRONTEND_URL=<YOUR-FRONTEND-REACT-URL or http://localhost:5173>
 PORT=3000
+
 ```
 
-4.             Start the development servers:
+- Create a .env file in the frontend directory and add the following:
+
+```env
+
+VITE_REACT_APP_API_URL=<YOUR-BACKEND-URL>/api/
+
+```
+
+4. Start the development servers:
 
 - Backend (from inside backend folder):
+
   ```
   npm run dev
   ```
 
-````
+-     Frontend (from inside frontend folder):
 
--  	Frontend (from inside frontend folder):
- ```
+```
 npm run dev
-````
+```
 
 ### Usage
 
@@ -118,20 +153,32 @@ After installation, you can access the application locally via http://localhost:
   • Email: test@gmail.com
   • Password: 123456
 
-### API End Points
+### API Endpoints
 
 Below is a summary of the key API endpoints:
 
 - Authentication
+
   • POST /api/auth/register - Register a new user.
   • POST /api/auth/login - Login a user.
+  • POST /api/auth/refresh-token - Refresh the user token.
+  • POST /api/auth/fetchUserFromToken - Fetch user information based on token.
+  • POST /api/auth/logout - Logout a user.
+
 - Books
-  • GET /api/books - Retrieve all books.
-  • POST /api/books - Add a new book.
-  • PUT /api/books/:id - Update book details.
-  • DELETE /api/books/:id - Delete a book.
+
+  • POST /api/books/add-book - Add a new book (admin only).
+  • GET /api/books/get-books - Retrieve all books.
+  • GET /api/books/get-book/:id - Retrieve a specific book by ID.
+  • DELETE /api/books/delete-book/:id - Delete a book (admin only).
+
 - Users
-  • GET /api/users - Retrieve all users.
-  • POST /api/users - Add a new user.
-  • PUT /api/users/:id - Update user details.
-  • DELETE /api/users/:id - Delete a user.
+
+  • POST /api/users/borrow - Borrow a book (authenticated user).
+  • POST /api/users/return - Return a borrowed book (authenticated user).
+  • POST /api/users/borrowed-books - Retrieve all borrowed books by the user (authenticated user).
+
+### Notes
+
+    •	Admin Endpoints: Some endpoints require admin privileges and are protected by middleware to ensure that only authorized users can access them.
+    •	Authentication: Certain endpoints require JWT authentication, which is enforced by middleware.
